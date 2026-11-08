@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="robots" content="noindex, nofollow">
   <title>AI Content Marketing Studio</title>
   <style>
     :root {
@@ -606,6 +607,10 @@
           </div>
           <div id="res-hashtags" class="output-body"></div>
         </div>
+
+        <div style="font-size:0.78rem;color:var(--text-muted);line-height:1.5;padding:4px 2px 0;">
+          📝 Ini draf awal. Edit dulu sebelum dipakai, dan hindari klaim penghasilan atau hasil pasti.
+        </div>
       </div>
     </section>
 
@@ -670,27 +675,48 @@
 
     <!-- TAB 4: PANDUAN -->
     <section id="tab-guide" class="tab-content">
-      <div class="section-title">📖 Panduan Penggunaan</div>
-      <div class="section-desc">Tips maksimalkan pemasaran konten untuk UMKM, Affiliate, dan Creator.</div>
+      <div class="section-title">📖 Panduan Singkat</div>
+      <div class="section-desc">Cara memakai tool ini untuk membuat draf konten dengan cepat.</div>
 
       <div class="card">
-        <h4 style="color: var(--primary); margin-bottom: 6px;">1. Formula Hook 3 Detik</h4>
+        <h4 style="color: var(--primary); margin-bottom: 6px;">1. Mulai</h4>
         <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-          Penonton menentukan lanjut menonton atau swipe dalam 3 detik pertama. Gunakan kalimat penasaran, fakta mengejutkan, atau langsung sebutkan masalah audience.
+          Isi nama produk dan target audience, pilih gaya konten, lalu klik Generate. Makin jelas deskripsi produknya, makin berguna hasilnya.
         </p>
       </div>
 
       <div class="card">
-        <h4 style="color: var(--accent); margin-bottom: 6px;">2. Memakai Prompt Video AI</h4>
+        <h4 style="color: var(--accent); margin-bottom: 6px;">2. Hook 3 Detik</h4>
         <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-          Copy <i>Prompt AI Video</i> yang dihasilkan tool ini, lalu paste ke tools generator video AI seperti <strong>Kling AI, Luma Dream Machine, Runway Gen-2, atau Veo</strong> untuk membuat b-roll video produk otomatis tanpa syuting!
+          Orang memutuskan lanjut nonton atau swipe di 3 detik pertama. Pakai rasa penasaran, atau langsung sebut masalah yang dialami audience.
         </p>
       </div>
 
       <div class="card">
-        <h4 style="color: var(--warning); margin-bottom: 6px;">3. Mode Offline vs Online (Gemini API)</h4>
+        <h4 style="color: var(--warning); margin-bottom: 6px;">3. Prompt Video AI</h4>
         <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
-          Tool ini dilengkapi <strong>Smart Fallback Generator</strong>. Tanpa internet/API key pun tool tetap berfungsi menghasilkan template materi promosi lengkap! Masukkan API key jika ingin respon yang dipersonalisasi AI secara mendalam.
+          Salin prompt-nya, lalu tempel ke tools video AI seperti Kling, Luma, Runway, atau Veo untuk membuat b-roll. Setiap tools punya batas pemakaian sendiri, dan hasilnya perlu kamu cek dulu sebelum dipakai.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--primary); margin-bottom: 6px;">4. Mode Offline vs AI</h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+          <strong>Offline</strong>: template dasar, langsung jalan tanpa akun apa pun. <strong>Mode AI</strong>: hasil lebih bervariasi, butuh API key Gemini gratis dari Google (cara membuatnya ada di tab <strong>Koneksi AI</strong>). Key disimpan di browser kamu sendiri, jangan dibagikan ke siapa pun.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--accent); margin-bottom: 6px;">5. Kalau Muncul Error</h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+          <strong>429</strong> = kuota gratis harian habis, coba lagi besok. <strong>503</strong> = server Google sedang sibuk, tunggu beberapa menit lalu coba lagi. Hindari menekan tombol berkali-kali karena setiap klik memakai kuota. Cek panel abu-abu di tab Koneksi AI untuk melihat detail error.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--warning); margin-bottom: 6px;">6. Hasil = Draf</h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+          Edit dulu sebelum posting supaya sesuai gaya dan pengalamanmu. Jangan pakai klaim penghasilan atau hasil pasti, jangan karang testimoni, dan jangan buat stok terbatas palsu.
         </p>
       </div>
     </section>
@@ -1114,27 +1140,33 @@
     }
 
     async function fetchFromGemini(niche, prodName, prodDesc, targetAud, tone, platform) {
+      const hardSell = tone.indexOf('Hard Sell') !== -1;
       const promptText = `
-Kamu adalah Master Copywriter & Specialist Viral Content Strategist.
-Buatkan materi promosi lengkap untuk produk berikut:
+Kamu adalah content strategist untuk konten soft selling berbahasa Indonesia yang terdengar natural, seperti ngobrol, bukan seperti iklan.
+Buatkan materi konten untuk produk berikut:
 - Niche: ${niche}
 - Nama Produk/Brand: ${prodName}
 - USP/Detail Produk: ${prodDesc}
 - Target Audience: ${targetAud}
-- Tone / Gaya Bahasa: ${tone}
+- Gaya Bahasa: ${tone}
 - Platform Utama: ${platform}
 
-Jika niche termasuk produk digital (E-book, Template, Worksheet, Kelas Online, Tools, atau Paket Reseller), sesuaikan ide, visual, dan naskah dengan produk digital: tampilkan preview isi/fitur, mockup di HP atau laptop, manfaat praktis, cara penggunaan, dan siapa yang cocok memakainya. Jangan menggambarkan produk digital seolah barang fisik. Untuk paket reseller, jangan menjanjikan penghasilan; jelaskan bahwa pembeli tetap perlu promosi dan mencari pelanggan.
+PRINSIP:
+- Konten harus membuat audience berpikir "ini relate sama gue" atau "baru tahu ternyata begini", bukan "orang ini lagi jualan ke gue".
+- Utamakan value, rasa penasaran, atau cerita. Produk disebut halus, tidak di setiap kalimat.
+- ${hardSell ? 'Gaya hard sell dipilih: CTA boleh lebih tegas dan langsung, tetapi tetap tanpa klaim hasil atau penghasilan dan tanpa kelangkaan palsu.' : 'CTA harus lembut: ajak komentar, simpan, baca caption, atau lihat profil. Jangan "beli sekarang" atau "buruan".'}
+- Semua visual harus bisa dibuat TANPA menampilkan wajah: screen recording, tangan memegang HP, laptop, meja kerja, teks animasi, stock footage, screenshot/tutorial, atau visual AI.
+- Jangan membuat klaim penghasilan atau hasil pasti, jangan klaim medis, jangan mengarang testimoni, angka, atau kisah pribadi. Kalau perlu cerita, beri tanda [ganti dengan pengalaman nyata].
+- Jika produk digital (E-book, Template, Worksheet, Kelas Online, Tools, Paket Reseller): tampilkan preview isi/fitur, mockup di HP atau laptop, manfaat praktis, dan siapa yang cocok. Jangan menggambarkannya seperti barang fisik. Untuk paket reseller, tegaskan bahwa pembeli tetap perlu promosi dan mencari pelanggan sendiri.
+- Ikuti gaya bahasa yang dipilih secara nyata: struktur dan isi naskah harus berbeda untuk tiap gaya, bukan hanya ganti kata pembuka.
 
-Aturan: jangan membuat klaim hasil/penghasilan yang pasti, jangan klaim medis, dan jangan mengarang testimoni.
-
-Berikan output dalam FORMAT JSON VALID persis dengan struktur key berikut (semua value berupa string):
+Berikan output dalam FORMAT JSON VALID persis dengan key berikut (semua value berupa string):
 {
-  "hooks": "Tuliskan 3 hook kalimat pembuka viral dalam 3 detik pertama (pakai nomor 1, 2, 3)",
-  "script": "Tuliskan naskah/script video pendek berdurasi 15-30 detik lengkap dengan keterangan Visual & Audio/Voiceover",
-  "prompt": "Tuliskan prompt AI Video Generator detail dalam Bahasa Inggris (cocok untuk Kling/Luma/Veo/Runway) agar menghasilkan b-roll video cinematic produk ini",
-  "caption": "Tuliskan caption postingan yang persuasif lengkap dengan Call to Action (CTA) yang jelas",
-  "hashtags": "Tuliskan 10-15 hashtag relevan dan potensial FYP"
+  "hooks": "3 hook berbeda angle untuk 3 detik pertama (nomor 1, 2, 3). Variasikan: masalah, rasa penasaran, dan kesalahan/mitos.",
+  "script": "Naskah video 10-20 detik, bagian: HOOK, MASALAH/RASA PENASARAN, INSIGHT/SOLUSI SINGKAT, CTA. Tiap bagian ada Visual (faceless), Teks di layar, dan Voiceover. Variasikan susunannya, jangan template kaku.",
+  "prompt": "Prompt AI video dalam Bahasa Inggris (cocok untuk Kling/Luma/Veo/Runway) untuk b-roll faceless: tanpa wajah, tanpa teks, tanpa logo, sesuai tema produk.",
+  "caption": "Caption yang TIDAK mengulang isi video. Tambahkan informasi baru, konteks, atau rasa penasaran, lalu CTA sesuai aturan di atas.",
+  "hashtags": "8-12 hashtag relevan, campur yang luas dan yang spesifik"
 }
 JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
 
@@ -1229,7 +1261,7 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
           `Gini nih jadinya kalau ${a} akhirnya nemu ${p}.`
         ],
         'Persuasif & Hard Sell': [
-          `${p}: ${usp}. Cek sekarang sebelum kehabisan!`,
+          `${p}: ${usp}. Cek detailnya sekarang.`,
           `Capek sama solusi yang setengah-setengah? Coba ${p}.`,
           `Ini alasan ${a} memilih ${p} dibanding yang lain.`
         ],
@@ -1254,35 +1286,92 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
     }
 
     function ctaLine(tone) {
-      if (tone === 'Persuasif & Hard Sell') return 'Klik link/keranjang sekarang, stok terbatas!';
-      if (tone === 'Edukatif & Profesional') return 'Simpan postingan ini, detail lengkapnya ada di caption.';
-      return 'Detail lengkapnya ada di caption ya, cek sendiri!';
+      if (tone === 'Persuasif & Hard Sell') return 'Klik link di profil dan cek detailnya sekarang.';
+      if (tone === 'Edukatif & Profesional') return 'Simpan video ini, dan komen "LANJUT" kalau mau dibahas lebih dalam.';
+      if (tone === 'Emosional & Storytelling') return 'Kalau kamu pernah ngerasain hal yang sama, tulis di komentar ya.';
+      if (tone === 'Lucu & Bikin Penasaran') return 'Tag temen kamu yang butuh ini, atau komen "AKU" 😂';
+      return 'Kalau relate, komen "MAU" ya, nanti aku bahas lebih lanjut.';
+    }
+
+    // Isi cerita per gaya: dipakai bersama oleh naskah video, carousel, dan Facebook.
+    function toneBeats(tone, p, a, d, nd) {
+      const u = firstSentence(d);
+      const A = cap(a);
+      const T = {
+        'Santai & Friendly (Gen-Z)': {
+          problem: `Jujur, ${a} tuh sering banget ${nd.pain}. Capek nggak sih?`,
+          insight: `Ternyata ada cara yang lebih simpel. ${p}: ${u}.`,
+          vProblem: 'tangan scroll HP lalu menghela napas, teks singkat bergaya chat muncul di layar',
+          vInsight: `screen recording atau mockup ${p} di layar laptop/HP, 1-2 poin penting di-highlight`,
+          vCta: 'layar penutup sederhana dengan teks ajakan komentar',
+          tip: 'Mulai dari satu hal yang paling sering bikin kamu mentok. Nggak perlu semuanya sekaligus.',
+          close: 'Kamu paling mentok di bagian mana? Tulis di komentar ya!'
+        },
+        'Persuasif & Hard Sell': {
+          problem: `Sampai kapan ${a} mau terus ${nd.pain}?`,
+          insight: `${p} dibuat untuk membantu di situ. ${u}. Tetap perlu kamu pakai dan sesuaikan sendiri.`,
+          vProblem: 'teks besar kontras di atas footage laptop/meja kerja, potongan cepat',
+          vInsight: `tampilkan isi atau fitur ${p} lewat screen recording, teks tebal per poin`,
+          vCta: 'teks tebal + panah menunjuk ke profil/link',
+          tip: 'Cek dulu apakah isinya cocok dengan kebutuhanmu sebelum memutuskan.',
+          close: 'Ada pertanyaan sebelum mulai? Tanya di komentar.'
+        },
+        'Edukatif & Profesional': {
+          problem: `Kesalahan umum: ${a} langsung mencoba tanpa tahu akar masalahnya, yaitu ${nd.pain}.`,
+          insight: `Langkah awal yang lebih tepat: kenali kebutuhan dulu, baru pilih alatnya. ${p} bisa membantu: ${u}.`,
+          vProblem: 'teks bernomor muncul satu per satu di atas footage tangan mencatat di buku',
+          vInsight: `screenshot/tutorial singkat ${p}, panah dan highlight pada bagian penting`,
+          vCta: 'slide penutup berisi ringkasan 1 kalimat + ajakan simpan',
+          tip: 'Tulis dulu satu masalah yang paling sering kamu alami. Itu jadi patokan memilih solusi.',
+          close: 'Mau dibahas lebih dalam bagian yang mana? Komen ya.'
+        },
+        'Emosional & Storytelling': {
+          problem: `Ada masa ketika ${a} terus-terusan ${nd.pain}, dan rasanya nggak ada ujungnya.`,
+          insight: `Pelan-pelan sadar: yang dibutuhkan bukan lebih banyak usaha, tapi cara yang lebih pas. ${p} bisa jadi salah satu jalannya. ${u}.`,
+          vProblem: 'footage meja kerja suasana malam, gerakan pelan, teks cerita muncul bertahap',
+          vInsight: `tangan membuka ${p} di laptop/HP, cahaya hangat, teks singkat di layar`,
+          vCta: 'layar penutup tenang dengan satu kalimat ajakan komentar',
+          tip: '[Ganti bagian ini dengan pengalaman nyatamu sendiri. Cerita asli lebih dipercaya daripada template.]',
+          close: 'Kamu pernah di titik ini juga? Cerita di komentar.'
+        },
+        'Lucu & Bikin Penasaran': {
+          problem: `POV: ${a} lagi ${nd.pain} untuk kesekian kalinya 😭`,
+          insight: `Plot twist: ternyata ada cara yang lebih gampang. ${p}: ${u}.`,
+          vProblem: 'footage cepat dengan zoom, teks gaya meme di layar, efek suara ringan',
+          vInsight: `reveal cepat ${p} di layar laptop/HP, teks "plot twist" muncul`,
+          vCta: 'teks ajakan tag teman, gaya santai',
+          tip: 'Spill dulu masalah paling absurd yang pernah kamu alami, siapa tahu banyak yang senasib.',
+          close: 'Tag satu temen yang paling butuh ini 😂'
+        }
+      };
+      const t = T[tone] || T['Santai & Friendly (Gen-Z)'];
+      return Object.assign({ cta: ctaLine(tone), who: `Cocok buat ${a} yang sering ${nd.pain}.` }, t);
     }
 
     function buildScript(platform, tone, p, a, d, nd, firstHook) {
       const hook = firstHook.replace(/^1\.\s*/, '');
-      const usp = d;
-      const cta = ctaLine(tone);
+      const b = toneBeats(tone, p, a, d, nd);
+      const u = firstSentence(d);
 
       if (platform.indexOf('Carousel') !== -1) {
         return [
           `SLIDE 1 (Cover)`,
-          `Visual: foto ${p} + judul besar: "${hook}"`,
+          `Visual: judul besar: "${hook}"`,
           ``,
           `SLIDE 2 (Masalah)`,
-          `Teks: ${cap(a)} sering ${nd.pain}.`,
+          `Teks: ${b.problem}`,
           ``,
-          `SLIDE 3 (Solusi)`,
-          `Teks: Kenalan dengan ${p}. ${firstSentence(usp)}.`,
+          `SLIDE 3 (Insight)`,
+          `Teks: ${b.insight}`,
           ``,
-          `SLIDE 4 (Detail)`,
-          `Teks: ${usp}`,
+          `SLIDE 4 (Isi singkat)`,
+          `Teks: ${u}.`,
           ``,
-          `SLIDE 5 (Cara pakai / alasan memilih)`,
-          `Visual: foto detail atau penggunaan sehari-hari.`,
+          `SLIDE 5 (Langkah kecil)`,
+          `Teks: ${b.tip}`,
           ``,
           `SLIDE 6 (CTA)`,
-          `Teks: ${cta}`
+          `Teks: ${b.cta}`
         ].join('\n');
       }
 
@@ -1291,33 +1380,33 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
           `HEADLINE: ${hook}`,
           ``,
           `PRIMARY TEXT:`,
-          `${cap(a)}, pernah ${nd.pain}?`,
-          `${p} hadir sebagai solusinya. ${usp}`,
+          `${b.problem}`,
+          `${b.insight}`,
           ``,
-          `DESCRIPTION: ${firstSentence(usp)}.`,
+          `DESCRIPTION: ${u}.`,
           ``,
-          `CTA BUTTON: Pelajari Selengkapnya / Pesan Sekarang`,
+          `CTA BUTTON: Pelajari Selengkapnya`,
           ``,
-          `CATATAN VISUAL: gunakan foto produk yang jelas + 1 foto penggunaan nyata.`
+          `CATATAN VISUAL: gunakan mockup/screenshot yang jelas, tanpa perlu menampilkan wajah.`
         ].join('\n');
       }
 
       return [
         `[0-3 detik] HOOK`,
-        `Visual: close-up ${p}, teks besar di layar: "${hook}"`,
+        `Visual: teks besar di layar: "${hook}", latar footage tangan memegang HP atau meja kerja`,
         `Voiceover: "${hook}"`,
         ``,
-        `[3-10 detik] MASALAH`,
-        `Visual: footage ${a} yang sedang ${nd.pain}`,
-        `Voiceover: "Banyak yang ${nd.pain}. Padahal ada cara yang lebih simpel."`,
+        `[3-8 detik] MASALAH`,
+        `Visual: ${b.vProblem}`,
+        `Voiceover: "${b.problem}"`,
         ``,
-        `[10-20 detik] SOLUSI / DEMO`,
-        `Visual: demo ${p}, tampilkan keunggulan lewat teks singkat di layar`,
-        `Voiceover: "${p}. ${usp}"`,
+        `[8-16 detik] INSIGHT / SOLUSI`,
+        `Visual: ${b.vInsight}`,
+        `Voiceover: "${b.insight}"`,
         ``,
-        `[20-25 detik] CTA`,
-        `Visual: produk + teks ajakan di layar`,
-        `Voiceover: "${cta}"`
+        `[16-20 detik] CTA`,
+        `Visual: ${b.vCta}`,
+        `Voiceover: "${b.cta}"`
       ].join('\n');
     }
 
@@ -1338,22 +1427,26 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
 
     function buildCaption(tone, p, a, d, nd) {
       const openers = {
-        'Santai & Friendly (Gen-Z)': `Halo ${a}! Lagi nyari yang beneran berguna? Kenalan sama ${p} ✨`,
-        'Persuasif & Hard Sell': `${p} sudah siap bantu kamu. Jangan tunda lagi! 🔥`,
-        'Edukatif & Profesional': `Info singkat buat ${a}: kenali ${p} dan kegunaannya.`,
-        'Emosional & Storytelling': `Kadang hal kecil bisa bikin hari terasa lebih baik. Salah satunya ${p}. 💛`,
-        'Lucu & Bikin Penasaran': `Awalnya cuek, eh sekarang kepikiran terus sama ${p} 😅`
+        'Santai & Friendly (Gen-Z)': `Halo ${a}! Pernah ngerasa mentok di bagian ini? ✨`,
+        'Persuasif & Hard Sell': `Kalau kamu sudah siap mencoba, ini yang perlu kamu tahu tentang ${p}.`,
+        'Edukatif & Profesional': `Catatan tambahan buat ${a}: ini yang sering terlewat.`,
+        'Emosional & Storytelling': `Kadang butuh waktu buat sadar kalau caranya yang perlu diganti. 💛`,
+        'Lucu & Bikin Penasaran': `Video di atas baru bocoran. Sisanya aku taruh di sini 😅`
       };
-      const opener = openers[tone] || openers['Santai & Friendly (Gen-Z)'];
+      const b = toneBeats(tone, p, a, d, nd);
       return [
-        opener,
+        openers[tone] || openers['Santai & Friendly (Gen-Z)'],
         ``,
-        `${d}`,
+        `Tentang ${p}: ${d}`,
         ``,
-        `Cocok buat ${a} yang sering ${nd.pain}.`,
+        b.who,
         ``,
-        `👉 ${ctaLine(tone)}`,
-        `💬 Kamu paling butuh bantuan di bagian mana? Tulis di komentar ya!`
+        `💡 ${b.tip}`,
+        ``,
+        `Catatan: hasil tiap orang bisa berbeda, tergantung usaha dan konsistensi.`,
+        ``,
+        `👉 ${b.cta}`,
+        `💬 ${b.close}`
       ].join('\n');
     }
 
