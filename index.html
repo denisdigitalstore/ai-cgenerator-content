@@ -524,6 +524,11 @@
           <textarea id="prod-desc" placeholder="Jelaskan keunggulan utama produk, bahan, promo, atau masalah yang diselesaikan..."></textarea>
         </div>
 
+        <div class="form-group">
+          <label for="topic">Tema Konten (opsional)</label>
+          <input type="text" id="topic" placeholder="Kosongkan untuk konten umum, atau isi tema spesifik / ambil dari Kalender">
+        </div>
+
         <div class="grid-2">
           <div class="form-group">
             <label for="target-aud">Target Audience</label>
@@ -966,6 +971,8 @@
       const targetAud = document.getElementById('target-aud').value.trim() || 'Masyarakat Umum / Pelanggan Potensial';
       const tone = document.getElementById('tone').value;
       const platform = document.getElementById('platform').value;
+      const topicEl = document.getElementById('topic');
+      const topic = topicEl ? topicEl.value.trim() : '';
 
       const btn = document.getElementById('btn-generate');
       const origBtnHtml = btn.innerHTML;
@@ -978,19 +985,19 @@
 
         if (apiKey) {
           try {
-            results = await fetchFromGemini(niche, prodName, prodDesc, targetAud, tone, platform);
+            results = await fetchFromGemini(niche, prodName, prodDesc, targetAud, tone, platform, topic);
             sourceLabel = '✨ Dibuat oleh Gemini (' + (getStorage('gemini_model') || 'AI') + ')';
           } catch (err) {
             console.warn("Gemini API error, falling back to local generator:", err);
             const why = explainApiError(err);
             showToast('⚠️ Gemini gagal: ' + why + ' → hasil di bawah adalah template offline.');
             sourceLabel = '⚠️ Offline (Gemini gagal): ' + why;
-            results = generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform);
+            results = generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform, topic);
           }
         } else {
           // Add artificial smooth delay for realistic UX
           await new Promise(res => setTimeout(res, 400));
-          results = generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform);
+          results = generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform, topic);
         }
 
         // Render Results
@@ -1003,7 +1010,7 @@
         document.getElementById('res-hashtags').innerText = results.hashtags;
 
         currentGeneratedData = {
-          niche, prodName, prodDesc, tone, platform, ...results
+          niche, prodName, prodDesc, tone, platform, topic, ...results
         };
 
         const resultBox = document.getElementById('result-container');
@@ -1139,7 +1146,7 @@
       return JSON.parse(cleaned.slice(start, end + 1));
     }
 
-    async function fetchFromGemini(niche, prodName, prodDesc, targetAud, tone, platform) {
+    async function fetchFromGemini(niche, prodName, prodDesc, targetAud, tone, platform, topic) {
       const hardSell = tone.indexOf('Hard Sell') !== -1;
       const promptText = `
 Kamu adalah content strategist untuk konten soft selling berbahasa Indonesia yang terdengar natural, seperti ngobrol, bukan seperti iklan.
@@ -1149,7 +1156,7 @@ Buatkan materi konten untuk produk berikut:
 - USP/Detail Produk: ${prodDesc}
 - Target Audience: ${targetAud}
 - Gaya Bahasa: ${tone}
-- Platform Utama: ${platform}
+- Platform Utama: ${platform}${topic ? `\n- TEMA KONTEN (wajib jadi inti semua bagian: hook, naskah, caption): ${topic}` : ''}
 
 PRINSIP:
 - Konten harus membuat audience berpikir "ini relate sama gue" atau "baru tahu ternyata begini", bukan "orang ini lagi jualan ke gue".
@@ -1450,7 +1457,7 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
       ].join('\n');
     }
 
-    function generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform) {
+    function generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform, topic) {
       const nd = NICHE_DATA[niche] || NICHE_DATA['Edukasi & Bisnis'];
       const hooks = buildHooks(tone, prodName, targetAud, niche.toLowerCase(), prodDesc);
       const firstHook = hooks.split('\n')[0];
@@ -1459,7 +1466,7 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
       if (pt) tags.unshift(pt);
       return {
         hooks,
-        script: buildScript(platform, tone, prodName, targetAud, prodDesc, nd, firstHook),
+        script: (topic ? `TEMA: ${topic}\n(Mode offline hanya menempelkan tema. Pakai Mode AI agar seluruh isi mengikuti tema.)\n\n` : '') + buildScript(platform, tone, prodName, targetAud, prodDesc, nd, firstHook),
         prompt: buildPrompt(prodName, nd, tone, platform),
         caption: buildCaption(tone, prodName, targetAud, prodDesc, nd),
         hashtags: tags.join(' ')
@@ -1510,12 +1517,42 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
         card.appendChild(header);
         card.appendChild(topic);
         card.appendChild(detail);
+        if (item.gen) {
+          const gb = document.createElement('button');
+          gb.className = 'btn btn-sm';
+          gb.style.marginTop = '10px';
+          gb.textContent = '⚡ Generate konten dari tema ini';
+          gb.onclick = function () { useCalendarTopic(items.indexOf(item)); };
+          card.appendChild(gb);
+        }
         list.appendChild(card);
       });
     }
 
     function loadSavedCalendar() {
       renderCalendar(getCalendar());
+    }
+
+    const CAL_TONES = {
+      'Edukasi': 'Edukatif & Profesional',
+      'Relatable': 'Santai & Friendly (Gen-Z)',
+      'Tutorial': 'Edukatif & Profesional',
+      'Mitos vs Fakta': 'Lucu & Bikin Penasaran',
+      'Storytelling': 'Emosional & Storytelling',
+      'Demo Produk': 'Edukatif & Profesional',
+      'Q&A + CTA': 'Santai & Friendly (Gen-Z)'
+    };
+
+    function useCalendarTopic(index) {
+      const item = getCalendar()[index];
+      if (!item) return;
+      const topicEl = document.getElementById('topic');
+      if (topicEl) topicEl.value = item.topic;
+      const toneEl = document.getElementById('tone');
+      if (toneEl && item.tone) toneEl.value = item.tone;
+      switchTab('tab-generator', document.querySelector('.nav-item[onclick*="tab-generator"]'));
+      showToast('⚡ Membuat konten untuk: ' + item.label);
+      generateContent();
     }
 
     function generate7DayCalendar() {
@@ -1532,7 +1569,7 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
         { type: 'Storytelling', topic: `Cerita di balik ${p}`, detail: `Format: footage proses + narasi.\nCeritakan kenapa produk ini dibuat atau dipilih.` },
         { type: 'Demo Produk', topic: `Demo ${p}: sorot keunggulan utama`, detail: `Format: video demo.\nSebut keunggulan secara jujur, tanpa klaim hasil yang pasti.` },
         { type: 'Q&A + CTA', topic: `Jawab pertanyaan audience tentang ${p}`, detail: `Format: video jawab komentar.\nSoft CTA: arahkan ke profil atau caption untuk info lengkap.` }
-      ].map((d, i) => ({ label: `Hari ${i + 1}`, type: d.type, topic: d.topic, detail: d.detail }));
+      ].map((d, i) => ({ label: `Hari ${i + 1}`, type: d.type, topic: d.topic, detail: d.detail, gen: true, tone: CAL_TONES[d.type] || 'Santai & Friendly (Gen-Z)' }));
 
       setStorage(CAL_KEY, plan);
       renderCalendar(plan);
