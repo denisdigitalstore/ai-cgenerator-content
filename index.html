@@ -999,7 +999,7 @@
     const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta';
     // Urutan model yang dicoba. 'gemini-flash-latest' selalu menunjuk ke Flash terbaru,
     // jadi tidak ikut mati kalau Google pensiunkan versi tertentu.
-    const MODEL_CHAIN = ['gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
+    const MODEL_CHAIN = ['gemini-3.5-flash-lite', 'gemini-3.5-flash', 'gemini-flash-lite-latest', 'gemini-flash-latest'];
 
     function versionOf(name) {
       const m = name.match(/gemini-(\d+(?:\.\d+)*)/);
@@ -1039,11 +1039,29 @@
       return new Error('Gemini API ' + res.status + ': ' + (detail || res.statusText || 'Permintaan gagal'));
     }
 
+    async function buildModelChain(key) {
+      try {
+        const res = await fetchWithTimeout(`${GEMINI_BASE}/models?pageSize=100`, { headers: { 'x-goog-api-key': key } }, 15000);
+        if (!res.ok) return MODEL_CHAIN;
+        const data = await res.json();
+        const names = (data.models || [])
+          .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+          .map(m => m.name.replace('models/', ''))
+          .filter(n => /^gemini-[\d.]+-flash(-lite)?$/.test(n));
+        if (!names.length) return MODEL_CHAIN;
+        // lite dulu (kuota free tier paling longgar), versi terbaru dulu
+        names.sort((x, y) => {
+          const lx = /lite/.test(x) ? 0 : 1, ly = /lite/.test(y) ? 0 : 1;
+          return lx - ly || compareVersionDesc(x, y);
+        });
+        return [...names.slice(0, 4), 'gemini-flash-lite-latest', 'gemini-flash-latest'];
+      } catch (_) {
+        return MODEL_CHAIN;
+      }
+    }
+
     async function callGemini(key, text) {
-      const cached = getStorage('gemini_model');
-      const chain = cached && MODEL_CHAIN.includes(cached)
-        ? [cached, ...MODEL_CHAIN.filter(m => m !== cached)]
-        : MODEL_CHAIN;
+      const chain = await buildModelChain(key);
       let lastErr = null;
       const tried = [];
       for (const model of chain) {
