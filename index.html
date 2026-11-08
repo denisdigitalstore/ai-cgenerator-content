@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AI Content Marketing Studio</title>
+  <style>
+    :root {
+      --bg-main: #0b0f19;
+      --bg-card: #151c2c;
+      --bg-card-hover: #1e293b;
+      --border: #2a364f;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --accent: #ec4899;
+      --accent-glow: rgba(236, 72, 153, 0.25);
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --nav-height: 65px;
+      --radius: 14px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding-bottom: calc(var(--nav-height) + 24px + env(safe-area-inset-bottom));
+      overflow-x: hidden;
+    }
+
+    /* HEADER */
+    .app-header {
+      position: sticky;
+      top: 0;
+      z-index: 90;
+      background: rgba(11, 15, 25, 0.9);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-title h1 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #818cf8, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .status-badge {
+      font-size: 0.72rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s;
+    }
+
+    .status-badge.offline {
+      background: rgba(245, 158, 11, 0.15);
+      color: var(--warning);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .status-badge.online {
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--success);
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background-color: currentColor;
+    }
+
+    /* CONTAINER & SECTIONS */
+    .container {
+      max-width: 800px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px;
+      flex: 1;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease-in-out;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .section-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+      line-height: 1.4;
+    }
+
+    /* CARDS & FORMS */
+    .card {
+      background-color: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    label {
+      display: block;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      background-color: rgba(11, 15, 25, 0.6);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-size: 0.92rem;
+      transition: all 0.2s;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* BUTTONS */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), #4f46e5);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+    }
+
+    .btn:hover {
+      opacity: 0.95;
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card-hover);
+      border: 1px solid var(--border);
+      color: var(--text);
+      box-shadow: none;
+    }
+
+    .btn-secondary:hover {
+      background: #28354d;
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+      box-shadow: none;
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.3);
+    }
+
+    .btn-sm {
+      padding: 8px 12px;
+      font-size: 0.8rem;
+      width: auto;
+      border-radius: 6px;
+    }
+
+    /* GENERATED RESULT STYLES */
+    .result-box {
+      margin-top: 24px;
+      display: none;
+    }
+
+    .result-box.active {
+      display: block;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .output-card {
+      position: relative;
+      background: #111827;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .output-card.ai-prompt {
+      border-left-color: var(--accent);
+    }
+
+    .output-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .output-title.ai-title {
+      color: var(--accent);
+    }
+
+    .output-body {
+      font-size: 0.9rem;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      color: #e2e8f0;
+      word-break: break-word;
+    }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--text-muted);
+      padding: 5px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: var(--text);
+    }
+
+    /* CALENDAR SPECIFIC */
+    .calendar-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .day-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+    }
+
+    .day-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 0.88rem;
+      color: var(--accent);
+      margin-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+
+    .day-topic {
+      font-weight: 600;
+      color: #fff;
+      font-size: 0.95rem;
+      margin-bottom: 6px;
+    }
+
+    .day-detail {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* BOTTOM NAVIGATION */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: calc(var(--nav-height) + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+      background-color: #0d1322;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+      box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 20%;
+      height: 100%;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.68rem;
+      gap: 4px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .nav-item svg {
+      width: 20px;
+      height: 20px;
+      fill: currentColor;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+      font-weight: 700;
+    }
+
+    .nav-item.active svg {
+      transform: translateY(-2px);
+      filter: drop-shadow(0 2px 8px rgba(99, 102, 241, 0.6));
+    }
+
+    /* TOAST NOTIFICATION */
+    .toast {
+      position: fixed;
+      top: 70px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: #10b981;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      z-index: 2000;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .loader {
+      width: 18px;
+      height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-bottom-color: #ffffff;
+      border-radius: 50%;
+      display: inline-block;
+      animation: rotation 0.8s linear infinite;
+    }
+
+    @keyframes rotation {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (min-width: 640px) {
+      .grid-2 { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 639px) {
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- APP HEADER -->
+  <header class="app-header">
+    <div class="header-title">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" fill="url(#grad)" />
+        <defs>
+          <linearGradient id="grad" x1="2" y1="2" x2="22" y2="21" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#818cf8"/>
+            <stop offset="1" stop-color="#ec4899"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <h1>ContentStudio AI</h1>
+    </div>
+    <div id="mode-badge" class="status-badge offline">
+      <span class="status-dot"></span>
+      <span id="mode-text">Mode Offline</span>
+    </div>
+  </header>
+
+  <!-- TOAST NOTIFICATION -->
+  <div id="toast" class="toast">Teks berhasil disalin!</div>
+
+  <!-- MAIN CONTENT CONTAINER -->
+  <main class="container">
+
+    <!-- TAB 1: GENERATOR (MAIN) -->
+    <section id="tab-generator" class="tab-content active">
+      <div class="section-title">✨ Generator Konten AI</div>
+      <div class="section-desc">Hasilkan ide viral, script video, prompt AI video, dan caption dalam hitungan detik.</div>
+
+      <div class="card">
+        <div class="form-group">
+          <label for="niche">Niche / Kategori Bisnis</label>
+          <select id="niche">
+            <option value="Fashion & Mode">Fashion & Mode</option>
+            <option value="Kuliner & Makanan">Kuliner & Makanan (F&B)</option>
+            <option value="Skincare & Kecantikan">Skincare & Kecantikan</option>
+            <option value="Gadget & Teknologi">Gadget & Teknologi</option>
+            <option value="Kesehatan & Fitness">Kesehatan & Fitness</option>
+            <option value="Edukasi & Bisnis">Edukasi / Jasa / Bisnis</option>
+            <option value="E-book & Panduan">Produk Digital — E-book & Panduan</option>
+            <option value="Template & Desain">Produk Digital — Template & Desain</option>
+            <option value="Worksheet & Printable">Produk Digital — Worksheet & Printable</option>
+            <option value="Kelas & Edukasi Online">Produk Digital — Kelas & Edukasi Online</option>
+            <option value="Tools & Software">Produk Digital — Tools & Software</option>
+            <option value="Paket Reseller Digital">Produk Digital — Paket Reseller Digital</option>
+            <option value="Home & Living">Peralatan Rumah / Unik</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="prod-name">Nama Produk / Brand</label>
+          <input type="text" id="prod-name" placeholder="Misal: Glowing Serum X / Keripik Pedas Nampol">
+        </div>
+
+        <div class="form-group">
+          <label for="prod-desc">Detail / Keunggulan Produk (USP)</label>
+          <textarea id="prod-desc" placeholder="Jelaskan keunggulan utama produk, bahan, promo, atau masalah yang diselesaikan..."></textarea>
+        </div>
+
+        <div class="grid-2">
+          <div class="form-group">
+            <label for="target-aud">Target Audience</label>
+            <input type="text" id="target-aud" placeholder="Misal: Remaja, Ibu Muda, Gen-Z">
+          </div>
+          <div class="form-group">
+            <label for="tone">Gaya Bahasa (Tone)</label>
+            <select id="tone">
+              <option value="Santai & Friendly (Gen-Z)">Santai & Friendly (Gen-Z)</option>
+              <option value="Persuasif & Hard Sell">Persuasif & Hard Sell</option>
+              <option value="Edukatif & Profesional">Edukatif & Profesional</option>
+              <option value="Emosional & Storytelling">Emosional & Storytelling</option>
+              <option value="Lucu & Bikin Penasaran">Lucu & Bikin Penasaran</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="platform">Platform Utama</label>
+          <select id="platform">
+            <option value="TikTok / IG Reels / Shorts">TikTok / IG Reels / Shorts (Video Pendek)</option>
+            <option value="Instagram Feed / Carousel">Instagram Feed / Carousel</option>
+            <option value="Facebook Ads / Marketplace">Facebook Ads / Marketplace</option>
+          </select>
+        </div>
+
+        <button id="btn-generate" class="btn" onclick="generateContent()">
+          <span>⚡ Buat Konten Sekarang</span>
+        </button>
+      </div>
+
+      <!-- RESULTS DISPLAY -->
+      <div id="result-container" class="result-box">
+        <div class="result-header">
+          <h3>🚀 Hasil Generator</h3>
+          <span id="res-source" style="font-size:0.75rem;padding:3px 8px;border-radius:99px;background:rgba(128,128,128,0.2);"></span>
+          <button class="btn btn-secondary btn-sm" onclick="saveCurrentResultToCalendar()">💾 Simpan ke Kalender</button>
+        </div>
+
+        <!-- 1. HOOKS -->
+        <div class="output-card">
+          <div class="output-title">
+            <span>🔥 3 Hook Viral (3 Detik Pertama)</span>
+            <button class="copy-btn" onclick="copyText('res-hooks')">📋 Salin</button>
+          </div>
+          <div id="res-hooks" class="output-body"></div>
+        </div>
+
+        <!-- 2. SCRIPT VIDEO -->
+        <div class="output-card">
+          <div class="output-title">
+            <span>🎬 Script Video Short-Form (TikTok/Reels)</span>
+            <button class="copy-btn" onclick="copyText('res-script')">📋 Salin</button>
+          </div>
+          <div id="res-script" class="output-body"></div>
+        </div>
+
+        <!-- 3. AI VIDEO PROMPT -->
+        <div class="output-card ai-prompt">
+          <div class="output-title ai-title">
+            <span>🤖 Prompt AI Video Generator (Kling / Veo / Luma)</span>
+            <button class="copy-btn" onclick="copyText('res-prompt')">📋 Salin Prompt</button>
+          </div>
+          <div id="res-prompt" class="output-body"></div>
+        </div>
+
+        <!-- 4. CAPTION & CTA -->
+        <div class="output-card">
+          <div class="output-title">
+            <span>✍️ Caption Medsos & CTA</span>
+            <button class="copy-btn" onclick="copyText('res-caption')">📋 Salin</button>
+          </div>
+          <div id="res-caption" class="output-body"></div>
+        </div>
+
+        <!-- 5. HASHTAGS -->
+        <div class="output-card">
+          <div class="output-title">
+            <span>#️⃣ Rekomendasi Hashtag</span>
+            <button class="copy-btn" onclick="copyText('res-hashtags')">📋 Salin</button>
+          </div>
+          <div id="res-hashtags" class="output-body"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: KALENDER KONTEN -->
+    <section id="tab-calendar" class="tab-content">
+      <div class="section-title">📅 Kalender Konten (7 Hari)</div>
+      <div class="section-desc">Rencana strategi posting mingguan untuk menjaga konsistensi brand Anda.</div>
+
+      <div class="card" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div>
+          <strong style="font-size:0.9rem;">Auto-Generate Rencana 7 Hari</strong>
+          <p style="font-size:0.8rem; color:var(--text-muted);">Sesuaikan dengan data dari tab Generator</p>
+        </div>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-sm" onclick="generate7DayCalendar()">⚡ Buat Jadwal</button>
+          <button class="btn btn-danger btn-sm" onclick="clearCalendar()">🗑️ Hapus</button>
+        </div>
+      </div>
+
+      <div id="calendar-list" class="calendar-grid">
+        <div class="card" style="text-align: center; color: var(--text-muted); padding: 30px;">
+          Belum ada kalender konten tersimpan. Klik <strong>"Buat Jadwal"</strong> di atas atau simpan hasil dari tab Generator.
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 3: KONEKSI AI (API SETTINGS) -->
+    <section id="tab-api" class="tab-content">
+      <div class="section-title">🔑 Koneksi AI (Opsional)</div>
+      <div class="section-desc">Gunakan Google Gemini API Key milik Anda sendiri untuk hasil yang lebih personal dan cerdas.</div>
+
+      <div class="card">
+        <div class="form-group">
+          <label for="api-key-input">Gemini API Key</label>
+          <input type="password" id="api-key-input" placeholder="AIzaSy...">
+        </div>
+        <p style="font-size: 0.75rem; color: var(--text-muted); margin-bottom: 14px;">
+          🔒 Key Anda disimpan secara lokal di browser (localStorage) & tidak pernah dikirim ke server manapun selain langsung ke API Google.
+        </p>
+
+        <div class="grid-2">
+          <button class="btn" onclick="saveApiKey()">Simpan Key</button>
+          <button class="btn btn-secondary" onclick="testApiKey()">Tes Koneksi</button>
+        </div>
+        <div style="margin-top:10px;">
+          <button class="btn btn-danger btn-sm" style="width:100%" onclick="removeApiKey()">Hapus Key</button>
+        </div>
+      </div>
+
+      <div class="card" style="background: rgba(99, 102, 241, 0.05); border-color: rgba(99, 102, 241, 0.2);">
+        <h4 style="font-size: 0.9rem; color: var(--primary); margin-bottom: 8px;"> Cara Dapatkan API Key Gratis:</h4>
+        <ol style="font-size: 0.85rem; color: var(--text-muted); padding-left: 20px; line-height: 1.6;">
+          <li>Buka <strong>aistudio.google.com</strong> di browser.</li>
+          <li>Login dengan akun Google/Gmail Anda.</li>
+          <li>Klik tombol <strong>"Get API Key"</strong> lalu <strong>"Create API key"</strong>.</li>
+          <li>Copy key lalu tempelkan pada kolom di atas.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- TAB 4: PANDUAN -->
+    <section id="tab-guide" class="tab-content">
+      <div class="section-title">📖 Panduan Penggunaan</div>
+      <div class="section-desc">Tips maksimalkan pemasaran konten untuk UMKM, Affiliate, dan Creator.</div>
+
+      <div class="card">
+        <h4 style="color: var(--primary); margin-bottom: 6px;">1. Formula Hook 3 Detik</h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+          Penonton menentukan lanjut menonton atau swipe dalam 3 detik pertama. Gunakan kalimat penasaran, fakta mengejutkan, atau langsung sebutkan masalah audience.
+        </p>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--accent); margin-bottom: 6px;">2. Memakai Prompt Video AI</h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+          Copy <i>Prompt AI Video</i> yang dihasilkan tool ini, lalu paste ke tools generator video AI seperti <strong>Kling AI, Luma Dream Machine, Runway Gen-2, atau Veo</strong> untuk membuat b-roll video produk otomatis tanpa syuting!
+        </p>
+      </div>
+
+      <div class="card">
+        <h4 style="color: var(--warning); margin-bottom: 6px;">3. Mode Offline vs Online (Gemini API)</h4>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+          Tool ini dilengkapi <strong>Smart Fallback Generator</strong>. Tanpa internet/API key pun tool tetap berfungsi menghasilkan template materi promosi lengkap! Masukkan API key jika ingin respon yang dipersonalisasi AI secara mendalam.
+        </p>
+      </div>
+    </section>
+
+    <!-- TAB 5: TENTANG -->
+    <section id="tab-about" class="tab-content">
+      <div class="section-title">ℹ️ Tentang Aplikasi</div>
+      <div class="section-desc">Informasi pengembang dan aplikasi.</div>
+
+      <div class="card" style="text-align: center; padding: 24px 16px;">
+        <div style="width: 60px; height: 60px; background: linear-gradient(135deg, var(--primary), var(--accent)); border-radius: 16px; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem;">
+          🚀
+        </div>
+        <h3 style="font-size: 1.1rem; margin-bottom: 4px;">ContentStudio AI v2.0</h3>
+        <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 16px;">Tool Kit Content Marketing All-in-One</p>
+        <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;">
+          Dirancang khusus untuk membantu Pemula, Reseller, Seller Toko Online, Affiliate Marketing, UMKM, dan Content Creator memproduksi konten promosi berkualitas tinggi tanpa ribet.
+        </p>
+        <div style="font-size: 0.75rem; color: var(--text-muted); border-top: 1px solid var(--border); padding-top: 14px;">
+          Made with ❤️ • Offline-First Web App • 100% Secure
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FIXED BOTTOM TAB BAR -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" onclick="switchTab('tab-generator', this)">
+      <svg viewBox="0 0 24 24"><path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/></svg>
+      <span>Studio</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tab-calendar', this)">
+      <svg viewBox="0 0 24 24"><path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zm0-12H5V6h14v2z"/></svg>
+      <span>Kalender</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tab-api', this)">
+      <svg viewBox="0 0 24 24"><path d="M12.65 10C11.83 7.67 9.61 6 7 6c-3.31 0-6 2.69-6 6s2.69 6 6 6c2.61 0 4.83-1.67 5.65-4H17v4h4v-4h2v-4H12.65zM7 14c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2z"/></svg>
+      <span>Koneksi AI</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tab-guide', this)">
+      <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+      <span>Panduan</span>
+    </button>
+    <button class="nav-item" onclick="switchTab('tab-about', this)">
+      <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+      <span>Tentang</span>
+    </button>
+  </nav>
+
+  <!-- JAVASCRIPT LOGIC -->
+  <script>
+    // APP STATE
+    let apiKey = '';
+    let currentGeneratedData = null;
+
+    // INITIALIZATION
+    document.addEventListener('DOMContentLoaded', () => {
+      loadSavedKey();
+      loadSavedCalendar();
+    });
+
+    // STORAGE HELPERS (TRY-CATCH SAFE)
+    function setStorage(key, val) {
+      try {
+        localStorage.setItem(key, JSON.stringify(val));
+      } catch (e) {
+        console.error('LocalStorage Error:', e);
+      }
+    }
+
+    function getStorage(key) {
+      try {
+        const d = localStorage.getItem(key);
+        return d ? JSON.parse(d) : null;
+      } catch (e) {
+        console.error('LocalStorage Error:', e);
+        return null;
+      }
+    }
+
+    // TAB NAVIGATION
+    function switchTab(tabId, btnEl) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+      
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+      if (btnEl) btnEl.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // TOAST NOTIFICATION
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2500);
+    }
+
+    // COPY TO CLIPBOARD
+    function copyText(elementId) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      const text = el.innerText || el.textContent;
+      if (!text) {
+        showToast('⚠️ Belum ada teks untuk disalin.');
+        return;
+      }
+      
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => {
+          showToast('📋 Teks berhasil disalin!');
+        }).catch(() => {
+          fallbackCopyText(text);
+        });
+      } else {
+        fallbackCopyText(text);
+      }
+    }
+
+    function fallbackCopyText(text) {
+      const textArea = document.createElement("textarea");
+      textArea.value = text;
+      document.body.appendChild(textArea);
+      textArea.select();
+      try {
+        document.execCommand('copy');
+        showToast('📋 Teks berhasil disalin!');
+      } catch (err) {
+        showToast('❌ Gagal menyalin teks.');
+      }
+      document.body.removeChild(textArea);
+    }
+
+    // API KEY MANAGEMENT
+    function loadSavedKey() {
+      const saved = getStorage('gemini_api_key');
+      if (saved) {
+        apiKey = saved;
+        document.getElementById('api-key-input').value = saved;
+        updateBadge(false, 'API Key tersimpan • belum dites');
+      } else {
+        updateBadge(false);
+      }
+    }
+
+    function saveApiKey(silent = false) {
+      const input = document.getElementById('api-key-input').value.trim();
+      if (!input) {
+        showToast('⚠️ Masukkan API Key terlebih dahulu!');
+        return false;
+      }
+      apiKey = input;
+      setStorage('gemini_api_key', apiKey);
+      updateBadge(false, 'API Key tersimpan • belum dites');
+      if (!silent) showToast('🔑 API Key tersimpan. Tes koneksi untuk memverifikasi.');
+      return true;
+    }
+
+    function removeApiKey() {
+      apiKey = '';
+      try { localStorage.removeItem('gemini_api_key'); localStorage.removeItem('gemini_model'); } catch(e){}
+      document.getElementById('api-key-input').value = '';
+      updateBadge(false);
+      showToast('🗑️ API Key telah dihapus.');
+    }
+
+    function updateBadge(isOnline, customLabel) {
+      const badge = document.getElementById('mode-badge');
+      const text = document.getElementById('mode-text');
+      if (isOnline) {
+        badge.className = 'status-badge online';
+        text.textContent = customLabel || 'Gemini AI Terverifikasi';
+      } else {
+        badge.className = 'status-badge offline';
+        text.textContent = customLabel || 'Mode Offline (Smart)';
+      }
+    }
+
+    function explainApiError(error) {
+      const msg = String(error && error.message ? error.message : error);
+      if (/API_KEY_INVALID|API key not valid|invalid api key/i.test(msg)) return 'API Key ditolak Google. Periksa key di AI Studio dan pastikan tersalin utuh.';
+      if (/PERMISSION_DENIED|403/i.test(msg)) return 'Akses ditolak (403). Periksa pembatasan API Key atau izin Gemini API di Google Cloud.';
+      if (/quota|RESOURCE_EXHAUSTED|429/i.test(msg)) return 'Kuota Gemini habis atau batas permintaan tercapai (429).';
+      if (/not found|NOT_FOUND|404/i.test(msg)) return 'Model Gemini tidak ditemukan (404). Daftar model/key perlu diperiksa.';
+      if (/timeout|AbortError/i.test(msg)) return 'Permintaan ke Gemini terlalu lama. Coba lagi atau periksa koneksi internet.';
+      if (/Failed to fetch|NetworkError|CORS/i.test(msg)) return 'Browser/preview tidak bisa menghubungi server Gemini. Coba buka file melalui URL Vercel atau Chrome biasa.';
+      return msg.length > 180 ? msg.slice(0, 180) + '…' : msg;
+    }
+
+    async function testApiKey() {
+      const key = document.getElementById('api-key-input').value.trim();
+      if (!key) {
+        showToast('⚠️ Masukkan API Key untuk dites!');
+        return;
+      }
+      showToast('⏳ Memeriksa koneksi Gemini...');
+      try {
+        try { localStorage.removeItem('gemini_model'); } catch (e) {}
+        const { model } = await callGemini(key, 'Balas singkat: OK');
+        apiKey = key;
+        setStorage('gemini_api_key', key);
+        updateBadge(true, 'Gemini AI Terverifikasi');
+        showToast('✅ Koneksi berhasil (' + model + '). API Key valid.');
+      } catch (e) {
+        console.error('Tes Gemini gagal:', e);
+        updateBadge(false, 'API Key belum terverifikasi');
+        showToast('❌ ' + explainApiError(e));
+      }
+    }
+
+    // MAIN CONTENT GENERATION LOGIC
+    async function generateContent() {
+      const niche = document.getElementById('niche').value;
+      const prodName = document.getElementById('prod-name').value.trim() || 'Produk Unggulan';
+      const prodDesc = document.getElementById('prod-desc').value.trim() || 'Produk berkualitas tinggi yang menyelesaikan solusi pelanggan.';
+      const targetAud = document.getElementById('target-aud').value.trim() || 'Masyarakat Umum / Pelanggan Potensial';
+      const tone = document.getElementById('tone').value;
+      const platform = document.getElementById('platform').value;
+
+      const btn = document.getElementById('btn-generate');
+      const origBtnHtml = btn.innerHTML;
+      btn.innerHTML = '<span class="loader"></span> <span>Sedang Memproses...</span>';
+      btn.disabled = true;
+
+      try {
+        let results = null;
+        let sourceLabel = '📴 Mode Offline (template lokal)';
+
+        if (apiKey) {
+          try {
+            results = await fetchFromGemini(niche, prodName, prodDesc, targetAud, tone, platform);
+            sourceLabel = '✨ Dibuat oleh Gemini (' + (getStorage('gemini_model') || 'AI') + ')';
+          } catch (err) {
+            console.warn("Gemini API error, falling back to local generator:", err);
+            const why = explainApiError(err);
+            showToast('⚠️ Gemini gagal: ' + why + ' → hasil di bawah adalah template offline.');
+            sourceLabel = '⚠️ Offline (Gemini gagal): ' + why;
+            results = generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform);
+          }
+        } else {
+          // Add artificial smooth delay for realistic UX
+          await new Promise(res => setTimeout(res, 400));
+          results = generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform);
+        }
+
+        // Render Results
+        const srcEl = document.getElementById('res-source');
+        if (srcEl) srcEl.textContent = sourceLabel;
+        document.getElementById('res-hooks').innerText = results.hooks;
+        document.getElementById('res-script').innerText = results.script;
+        document.getElementById('res-prompt').innerText = results.prompt;
+        document.getElementById('res-caption').innerText = results.caption;
+        document.getElementById('res-hashtags').innerText = results.hashtags;
+
+        currentGeneratedData = {
+          niche, prodName, prodDesc, tone, platform, ...results
+        };
+
+        const resultBox = document.getElementById('result-container');
+        resultBox.classList.add('active');
+        resultBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        showToast('🎉 Konten berhasil dibuat!');
+
+      } catch (error) {
+        console.error(error);
+        showToast('❌ Terjadi kesalahan saat membuat konten.');
+      } finally {
+        btn.innerHTML = origBtnHtml;
+        btn.disabled = false;
+      }
+    }
+
+    // ---------- GEMINI (ONLINE) ----------
+    const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta';
+    // Urutan model yang dicoba. 'gemini-flash-latest' selalu menunjuk ke Flash terbaru,
+    // jadi tidak ikut mati kalau Google pensiunkan versi tertentu.
+    const MODEL_CHAIN = ['gemini-flash-latest', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+
+    function versionOf(name) {
+      const m = name.match(/gemini-(\d+(?:\.\d+)*)/);
+      return m ? m[1].split('.').map(Number) : [0];
+    }
+
+    function compareVersionDesc(a, b) {
+      const va = versionOf(a), vb = versionOf(b);
+      for (let i = 0; i < Math.max(va.length, vb.length); i++) {
+        const diff = (vb[i] || 0) - (va[i] || 0);
+        if (diff !== 0) return diff;
+      }
+      return 0;
+    }
+
+    async function fetchWithTimeout(url, options = {}, timeoutMs = 45000) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        return await fetch(url, { ...options, signal: controller.signal });
+      } catch (err) {
+        if (err && err.name === 'AbortError') throw new Error('Koneksi timeout setelah 45 detik.');
+        throw err;
+      } finally {
+        clearTimeout(timer);
+      }
+    }
+
+    async function readGeminiError(res) {
+      let detail = '';
+      try {
+        const data = await res.json();
+        detail = data && data.error ? (data.error.message || JSON.stringify(data.error)) : JSON.stringify(data);
+      } catch (_) {
+        try { detail = await res.text(); } catch (_) {}
+      }
+      return new Error('Gemini API ' + res.status + ': ' + (detail || res.statusText || 'Permintaan gagal'));
+    }
+
+    async function callGemini(key, text) {
+      const cached = getStorage('gemini_model');
+      const chain = cached && MODEL_CHAIN.includes(cached)
+        ? [cached, ...MODEL_CHAIN.filter(m => m !== cached)]
+        : MODEL_CHAIN;
+      let lastErr = null;
+      for (const model of chain) {
+        const res = await fetchWithTimeout(`${GEMINI_BASE}/models/${model}:generateContent`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text }] }],
+            generationConfig: { responseMimeType: 'application/json' }
+          })
+        });
+        if (res.ok) {
+          const data = await res.json();
+          const out = data && data.candidates && data.candidates[0] &&
+            data.candidates[0].content && data.candidates[0].content.parts &&
+            data.candidates[0].content.parts.map(p => p.text || '').join('');
+          if (!out) {
+            const reason = data && data.promptFeedback && data.promptFeedback.blockReason;
+            throw new Error(reason ? 'Permintaan diblokir oleh Gemini: ' + reason : 'Respons kosong dari Gemini.');
+          }
+          setStorage('gemini_model', model);
+          return { text: out, model };
+        }
+        lastErr = await readGeminiError(res);
+        // Model tidak ada -> coba model berikutnya. Error lain (key salah, kuota) langsung stop.
+        if (res.status !== 404) throw lastErr;
+      }
+      throw lastErr || new Error('Tidak ada model Gemini yang tersedia.');
+    }
+
+    function toText(v) {
+      if (v == null) return '';
+      if (typeof v === 'string') return v.trim();
+      if (Array.isArray(v)) return v.map(toText).filter(Boolean).join('\n');
+      if (typeof v === 'object') {
+        return Object.entries(v).map(([k, val]) => `${k}: ${toText(val)}`).join('\n');
+      }
+      return String(v);
+    }
+
+    function parseJsonLoose(raw) {
+      const cleaned = raw.replace(/```json/gi, '').replace(/```/g, '').trim();
+      const start = cleaned.indexOf('{');
+      const end = cleaned.lastIndexOf('}');
+      if (start === -1 || end === -1) throw new Error('JSON tidak ditemukan');
+      return JSON.parse(cleaned.slice(start, end + 1));
+    }
+
+    async function fetchFromGemini(niche, prodName, prodDesc, targetAud, tone, platform) {
+      const promptText = `
+Kamu adalah Master Copywriter & Specialist Viral Content Strategist.
+Buatkan materi promosi lengkap untuk produk berikut:
+- Niche: ${niche}
+- Nama Produk/Brand: ${prodName}
+- USP/Detail Produk: ${prodDesc}
+- Target Audience: ${targetAud}
+- Tone / Gaya Bahasa: ${tone}
+- Platform Utama: ${platform}
+
+Jika niche termasuk produk digital (E-book, Template, Worksheet, Kelas Online, Tools, atau Paket Reseller), sesuaikan ide, visual, dan naskah dengan produk digital: tampilkan preview isi/fitur, mockup di HP atau laptop, manfaat praktis, cara penggunaan, dan siapa yang cocok memakainya. Jangan menggambarkan produk digital seolah barang fisik. Untuk paket reseller, jangan menjanjikan penghasilan; jelaskan bahwa pembeli tetap perlu promosi dan mencari pelanggan.
+
+Aturan: jangan membuat klaim hasil/penghasilan yang pasti, jangan klaim medis, dan jangan mengarang testimoni.
+
+Berikan output dalam FORMAT JSON VALID persis dengan struktur key berikut (semua value berupa string):
+{
+  "hooks": "Tuliskan 3 hook kalimat pembuka viral dalam 3 detik pertama (pakai nomor 1, 2, 3)",
+  "script": "Tuliskan naskah/script video pendek berdurasi 15-30 detik lengkap dengan keterangan Visual & Audio/Voiceover",
+  "prompt": "Tuliskan prompt AI Video Generator detail dalam Bahasa Inggris (cocok untuk Kling/Luma/Veo/Runway) agar menghasilkan b-roll video cinematic produk ini",
+  "caption": "Tuliskan caption postingan yang persuasif lengkap dengan Call to Action (CTA) yang jelas",
+  "hashtags": "Tuliskan 10-15 hashtag relevan dan potensial FYP"
+}
+JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
+
+      const { text } = await callGemini(apiKey, promptText);
+      const obj = parseJsonLoose(text);
+      const result = {
+        hooks: toText(obj.hooks),
+        script: toText(obj.script),
+        prompt: toText(obj.prompt),
+        caption: toText(obj.caption),
+        hashtags: toText(obj.hashtags)
+      };
+      if (!result.hooks || !result.script) throw new Error('Struktur JSON tidak lengkap');
+      return result;
+    }
+
+    // ---------- OFFLINE SMART GENERATOR ----------
+    const NICHE_DATA = {
+      'Fashion & Mode': {
+        en: 'fashion apparel', scene: 'on a clothing rack and styled on a mannequin, fabric texture close-ups',
+        pain: 'bingung mix & match outfit', tags: ['#ootd', '#fashion', '#outfitinspo', '#fashionindonesia', '#style']
+      },
+      'Kuliner & Makanan': {
+        en: 'food and snacks', scene: 'steam rising, crispy texture close-ups, hands picking up a bite',
+        pain: 'bingung cari camilan atau menu yang enak', tags: ['#kuliner', '#jajanan', '#foodie', '#rekomendasimakanan', '#umkm']
+      },
+      'Skincare & Kecantikan': {
+        en: 'skincare and beauty', scene: 'dewy product texture, droplets, clean bathroom shelf, soft morning light',
+        pain: 'bingung pilih rutinitas perawatan yang cocok', tags: ['#skincare', '#skincareroutine', '#beauty', '#perawatankulit', '#selfcare']
+      },
+      'Gadget & Teknologi': {
+        en: 'tech gadget', scene: 'sleek desk setup, screen glow, finger tapping, macro shots of ports and buttons',
+        pain: 'bingung pilih gadget yang sesuai kebutuhan', tags: ['#gadget', '#teknologi', '#reviewgadget', '#techtok', '#unboxing']
+      },
+      'Kesehatan & Fitness': {
+        en: 'health and fitness', scene: 'morning workout, water bottle, running shoes, energetic movement',
+        pain: 'susah konsisten menjaga rutinitas sehat', tags: ['#fitness', '#hidupsehat', '#olahraga', '#workout', '#healthylifestyle']
+      },
+      'Edukasi & Bisnis': {
+        en: 'education and business', scene: 'laptop and notebook on a tidy desk, hands typing, screen recording of a dashboard',
+        pain: 'bingung mulai dari mana', tags: ['#belajarbisnis', '#edukasi', '#tipsbisnis', '#usahaonline', '#produkdigital']
+      },
+      'Home & Living': {
+        en: 'home and living product', scene: 'cozy living room, product in daily use, before-and-after of a tidy corner',
+        pain: 'rumah berantakan dan susah ditata', tags: ['#homeliving', '#rumahminimalis', '#racunbelanja', '#produkunik', '#dekorasirumah']
+      },
+      'E-book & Panduan': {
+        en: 'digital ebook and downloadable guide', scene: 'ebook cover mockup on tablet and phone, page previews, reader browsing a digital guide',
+        pain: 'sulit menemukan panduan praktis yang runtut', tags: ['#ebook', '#ebookdigital', '#produkdigital', '#belajaronline', '#bisnisonline']
+      },
+      'Template & Desain': {
+        en: 'editable digital templates and design assets', scene: 'template previews on laptop and phone, before-after design, editable Canva-style layouts',
+        pain: 'menghabiskan waktu membuat desain dari nol', tags: ['#template', '#templatecanva', '#desainkonten', '#produkdigital', '#canvaindonesia']
+      },
+      'Worksheet & Printable': {
+        en: 'printable worksheets and educational activity sheets', scene: 'colorful printable worksheets on a desk, printed activity pages, child-friendly learning materials',
+        pain: 'bingung mencari aktivitas belajar yang praktis', tags: ['#worksheetanak', '#printable', '#aktivitasanak', '#belajaranak', '#produkdigital']
+      },
+      'Kelas & Edukasi Online': {
+        en: 'online course and digital learning materials', scene: 'online lesson playing on laptop, course modules, learner taking notes at a desk',
+        pain: 'ingin belajar keterampilan baru dengan panduan jelas', tags: ['#kelasonline', '#belajaronline', '#kursusonline', '#edukasi', '#produkdigital']
+      },
+      'Tools & Software': {
+        en: 'digital tools and software', scene: 'software dashboard on laptop, close-up of useful app features, workflow being simplified',
+        pain: 'pekerjaan berulang menyita banyak waktu', tags: ['#toolsdigital', '#software', '#aitools', '#produktif', '#produkdigital']
+      },
+      'Paket Reseller Digital': {
+        en: 'digital reseller product bundle', scene: 'organized digital product library on laptop, product mockups, seller preparing promotional content',
+        pain: 'bingung mulai jualan produk digital dari mana', tags: ['#resellerdigital', '#produkdigital', '#jualanonline', '#bisnispemula', '#penghasilantambahan']
+      }
+    };
+
+    function cap(t) {
+      return t ? t.charAt(0).toUpperCase() + t.slice(1) : t;
+    }
+
+    function firstSentence(text) {
+      return (text.split(/[.!?\n]/)[0] || text).trim();
+    }
+
+    function productTag(name) {
+      const t = name.replace(/[^a-zA-Z0-9]/g, '');
+      return t ? '#' + t.toLowerCase() : '';
+    }
+
+    function buildHooks(tone, p, a, nicheLabel, d) {
+      const usp = firstSentence(d);
+      const sets = {
+        'Santai & Friendly (Gen-Z)': [
+          `Stop scroll dulu! ${a} wajib tau soal ${p} ini 👀`,
+          `Jujur, awalnya ragu sama ${p}... sampai nyobain sendiri.`,
+          `Gini nih jadinya kalau ${a} akhirnya nemu ${p}.`
+        ],
+        'Persuasif & Hard Sell': [
+          `${p}: ${usp}. Cek sekarang sebelum kehabisan!`,
+          `Capek sama solusi yang setengah-setengah? Coba ${p}.`,
+          `Ini alasan ${a} memilih ${p} dibanding yang lain.`
+        ],
+        'Edukatif & Profesional': [
+          `3 hal yang perlu ${a} ketahui sebelum memilih produk ${nicheLabel}.`,
+          `Kesalahan umum di ${nicheLabel}, dan cara menghindarinya.`,
+          `Cara kerja ${p}, dijelaskan singkat dalam 15 detik.`
+        ],
+        'Emosional & Storytelling': [
+          `Ada hari-hari di mana ${a} cuma butuh satu hal yang bikin semuanya terasa lebih ringan...`,
+          `Awalnya cuma coba-coba, tapi ${p} ternyata jadi bagian dari rutinitas harian.`,
+          `Ini cerita kecil di balik ${p}.`
+        ],
+        'Lucu & Bikin Penasaran': [
+          `POV: ${a} lagi scroll terus ketemu ${p} 😭`,
+          `Jangan klik kalau belum siap penasaran sama ${p}.`,
+          `Plot twist: ${p} ternyata sebagus itu.`
+        ]
+      };
+      const list = sets[tone] || sets['Santai & Friendly (Gen-Z)'];
+      return list.map((h, i) => `${i + 1}. ${h}`).join('\n');
+    }
+
+    function ctaLine(tone) {
+      if (tone === 'Persuasif & Hard Sell') return 'Klik link/keranjang sekarang, stok terbatas!';
+      if (tone === 'Edukatif & Profesional') return 'Simpan postingan ini, detail lengkapnya ada di caption.';
+      return 'Detail lengkapnya ada di caption ya, cek sendiri!';
+    }
+
+    function buildScript(platform, tone, p, a, d, nd, firstHook) {
+      const hook = firstHook.replace(/^1\.\s*/, '');
+      const usp = d;
+      const cta = ctaLine(tone);
+
+      if (platform.indexOf('Carousel') !== -1) {
+        return [
+          `SLIDE 1 (Cover)`,
+          `Visual: foto ${p} + judul besar: "${hook}"`,
+          ``,
+          `SLIDE 2 (Masalah)`,
+          `Teks: ${cap(a)} sering ${nd.pain}.`,
+          ``,
+          `SLIDE 3 (Solusi)`,
+          `Teks: Kenalan dengan ${p}. ${firstSentence(usp)}.`,
+          ``,
+          `SLIDE 4 (Detail)`,
+          `Teks: ${usp}`,
+          ``,
+          `SLIDE 5 (Cara pakai / alasan memilih)`,
+          `Visual: foto detail atau penggunaan sehari-hari.`,
+          ``,
+          `SLIDE 6 (CTA)`,
+          `Teks: ${cta}`
+        ].join('\n');
+      }
+
+      if (platform.indexOf('Facebook') !== -1) {
+        return [
+          `HEADLINE: ${hook}`,
+          ``,
+          `PRIMARY TEXT:`,
+          `${cap(a)}, pernah ${nd.pain}?`,
+          `${p} hadir sebagai solusinya. ${usp}`,
+          ``,
+          `DESCRIPTION: ${firstSentence(usp)}.`,
+          ``,
+          `CTA BUTTON: Pelajari Selengkapnya / Pesan Sekarang`,
+          ``,
+          `CATATAN VISUAL: gunakan foto produk yang jelas + 1 foto penggunaan nyata.`
+        ].join('\n');
+      }
+
+      return [
+        `[0-3 detik] HOOK`,
+        `Visual: close-up ${p}, teks besar di layar: "${hook}"`,
+        `Voiceover: "${hook}"`,
+        ``,
+        `[3-10 detik] MASALAH`,
+        `Visual: footage ${a} yang sedang ${nd.pain}`,
+        `Voiceover: "Banyak yang ${nd.pain}. Padahal ada cara yang lebih simpel."`,
+        ``,
+        `[10-20 detik] SOLUSI / DEMO`,
+        `Visual: demo ${p}, tampilkan keunggulan lewat teks singkat di layar`,
+        `Voiceover: "${p}. ${usp}"`,
+        ``,
+        `[20-25 detik] CTA`,
+        `Visual: produk + teks ajakan di layar`,
+        `Voiceover: "${cta}"`
+      ].join('\n');
+    }
+
+    function buildPrompt(p, nd, tone, platform) {
+      const mood = {
+        'Santai & Friendly (Gen-Z)': 'bright, playful, handheld feel, natural daylight',
+        'Persuasif & Hard Sell': 'high-contrast, bold, dynamic camera moves, punchy pacing',
+        'Edukatif & Profesional': 'clean, minimal, steady shots, neutral soft lighting',
+        'Emosional & Storytelling': 'warm golden light, shallow depth of field, slow cinematic movement',
+        'Lucu & Bikin Penasaran': 'quirky, fast cuts, vibrant colors, comedic timing'
+      }[tone] || 'cinematic, natural lighting';
+      const ratio = platform.indexOf('Feed') !== -1 ? '4:5' : '9:16';
+      return `Cinematic product b-roll for a ${nd.en} product called "${p}". ` +
+        `Scenes: ${nd.scene}. Mood: ${mood}. ` +
+        `Camera: smooth slow push-in, macro close-ups, shallow depth of field. ` +
+        `Aspect ratio ${ratio}, 5 seconds per shot, high detail, realistic, no text, no logos, no watermark.`;
+    }
+
+    function buildCaption(tone, p, a, d, nd) {
+      const openers = {
+        'Santai & Friendly (Gen-Z)': `Halo ${a}! Lagi nyari yang beneran berguna? Kenalan sama ${p} ✨`,
+        'Persuasif & Hard Sell': `${p} sudah siap bantu kamu. Jangan tunda lagi! 🔥`,
+        'Edukatif & Profesional': `Info singkat buat ${a}: kenali ${p} dan kegunaannya.`,
+        'Emosional & Storytelling': `Kadang hal kecil bisa bikin hari terasa lebih baik. Salah satunya ${p}. 💛`,
+        'Lucu & Bikin Penasaran': `Awalnya cuek, eh sekarang kepikiran terus sama ${p} 😅`
+      };
+      const opener = openers[tone] || openers['Santai & Friendly (Gen-Z)'];
+      return [
+        opener,
+        ``,
+        `${d}`,
+        ``,
+        `Cocok buat ${a} yang sering ${nd.pain}.`,
+        ``,
+        `👉 ${ctaLine(tone)}`,
+        `💬 Kamu paling butuh bantuan di bagian mana? Tulis di komentar ya!`
+      ].join('\n');
+    }
+
+    function generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform) {
+      const nd = NICHE_DATA[niche] || NICHE_DATA['Edukasi & Bisnis'];
+      const hooks = buildHooks(tone, prodName, targetAud, niche.toLowerCase(), prodDesc);
+      const firstHook = hooks.split('\n')[0];
+      const tags = ['#fyp', '#rekomendasi', '#tiktokindonesia'].concat(nd.tags);
+      const pt = productTag(prodName);
+      if (pt) tags.unshift(pt);
+      return {
+        hooks,
+        script: buildScript(platform, tone, prodName, targetAud, prodDesc, nd, firstHook),
+        prompt: buildPrompt(prodName, nd, tone, platform),
+        caption: buildCaption(tone, prodName, targetAud, prodDesc, nd),
+        hashtags: tags.join(' ')
+      };
+    }
+
+    // ---------- CALENDAR ----------
+    const CAL_KEY = 'content_calendar';
+
+    function getCalendar() {
+      const saved = getStorage(CAL_KEY);
+      return Array.isArray(saved) ? saved : [];
+    }
+
+    function renderCalendar(items) {
+      const list = document.getElementById('calendar-list');
+      list.textContent = '';
+      if (!items.length) {
+        const empty = document.createElement('div');
+        empty.className = 'card';
+        empty.style.cssText = 'text-align:center; color:var(--text-muted); padding:30px;';
+        empty.innerHTML = 'Belum ada kalender konten tersimpan. Klik <strong>"Buat Jadwal"</strong> di atas atau simpan hasil dari tab Generator.';
+        list.appendChild(empty);
+        return;
+      }
+      items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'day-card';
+
+        const header = document.createElement('div');
+        header.className = 'day-header';
+        const label = document.createElement('span');
+        label.textContent = item.label;
+        const type = document.createElement('span');
+        type.textContent = item.type || '';
+        header.appendChild(label);
+        header.appendChild(type);
+
+        const topic = document.createElement('div');
+        topic.className = 'day-topic';
+        topic.textContent = item.topic;
+
+        const detail = document.createElement('div');
+        detail.className = 'day-detail';
+        detail.style.whiteSpace = 'pre-line';
+        detail.textContent = item.detail;
+
+        card.appendChild(header);
+        card.appendChild(topic);
+        card.appendChild(detail);
+        list.appendChild(card);
+      });
+    }
+
+    function loadSavedCalendar() {
+      renderCalendar(getCalendar());
+    }
+
+    function generate7DayCalendar() {
+      const p = document.getElementById('prod-name').value.trim() || 'Produk Unggulan';
+      const niche = document.getElementById('niche').value;
+      const a = document.getElementById('target-aud').value.trim() || 'audience kamu';
+      const nd = NICHE_DATA[niche] || NICHE_DATA['Edukasi & Bisnis'];
+
+      const plan = [
+        { type: 'Edukasi', topic: `3 hal yang perlu diketahui ${a} soal ${niche}`, detail: `Format: video 15-20 detik atau carousel.\nSoft CTA: ajak simpan postingan.` },
+        { type: 'Relatable', topic: `Masalah umum: ${nd.pain}`, detail: `Format: video relatable dengan teks di layar.\nTanpa menyebut produk, fokus bikin audience merasa "ini gue banget".` },
+        { type: 'Tutorial', topic: `Cara pakai / memilih ${p}`, detail: `Format: screen recording atau demo singkat.\nTunjukkan langkah demi langkah dengan jelas.` },
+        { type: 'Mitos vs Fakta', topic: `Mitos yang sering dipercaya soal ${niche}`, detail: `Format: teks animasi 10-15 detik.\nBeri 1 mitos, 1 fakta, 1 contoh singkat.` },
+        { type: 'Storytelling', topic: `Cerita di balik ${p}`, detail: `Format: footage proses + narasi.\nCeritakan kenapa produk ini dibuat atau dipilih.` },
+        { type: 'Demo Produk', topic: `Demo ${p}: sorot keunggulan utama`, detail: `Format: video demo.\nSebut keunggulan secara jujur, tanpa klaim hasil yang pasti.` },
+        { type: 'Q&A + CTA', topic: `Jawab pertanyaan audience tentang ${p}`, detail: `Format: video jawab komentar.\nSoft CTA: arahkan ke profil atau caption untuk info lengkap.` }
+      ].map((d, i) => ({ label: `Hari ${i + 1}`, type: d.type, topic: d.topic, detail: d.detail }));
+
+      setStorage(CAL_KEY, plan);
+      renderCalendar(plan);
+      showToast('📅 Jadwal 7 hari berhasil dibuat!');
+    }
+
+    function saveCurrentResultToCalendar() {
+      if (!currentGeneratedData) {
+        showToast('⚠️ Buat konten dulu sebelum menyimpan.');
+        return;
+      }
+      const d = currentGeneratedData;
+      const items = getCalendar();
+      const now = new Date();
+      items.push({
+        label: `Tersimpan ${now.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}`,
+        type: d.platform,
+        topic: `${d.prodName} (${d.niche})`,
+        detail: `Hook:\n${d.hooks}\n\nCaption:\n${d.caption}`
+      });
+      setStorage(CAL_KEY, items);
+      renderCalendar(items);
+      showToast('💾 Disimpan ke Kalender!');
+    }
+
+    function clearCalendar() {
+      if (!getCalendar().length) {
+        showToast('ℹ️ Kalender sudah kosong.');
+        return;
+      }
+      if (!confirm('Hapus semua jadwal konten?')) return;
+      try { localStorage.removeItem(CAL_KEY); } catch (e) {}
+      renderCalendar([]);
+      showToast('🗑️ Kalender dihapus.');
+    }
+  </script>
+</body>
+</html>
