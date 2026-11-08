@@ -649,9 +649,11 @@
         <div class="grid-2">
           <button class="btn" onclick="saveApiKey()">Simpan Key</button>
           <button class="btn btn-secondary" onclick="testApiKey()">Tes Koneksi</button>
+          <button class="btn btn-secondary" onclick="listAvailableModels()">Cek Model</button>
         </div>
         <div style="margin-top:10px;">
           <button class="btn btn-danger btn-sm" style="width:100%" onclick="removeApiKey()">Hapus Key</button>
+          <pre id="api-diag" style="display:none;margin-top:12px;padding:10px;border-radius:8px;background:rgba(128,128,128,0.15);font-size:0.72rem;white-space:pre-wrap;word-break:break-word;max-height:260px;overflow:auto;"></pre>
         </div>
       </div>
 
@@ -875,11 +877,37 @@
       const msg = String(error && error.message ? error.message : error);
       if (/API_KEY_INVALID|API key not valid|invalid api key/i.test(msg)) return 'API Key ditolak Google. Periksa key di AI Studio dan pastikan tersalin utuh.';
       if (/PERMISSION_DENIED|403/i.test(msg)) return 'Akses ditolak (403). Periksa pembatasan API Key atau izin Gemini API di Google Cloud.';
-      if (/quota|RESOURCE_EXHAUSTED|429/i.test(msg)) return 'Kuota Gemini habis atau batas permintaan tercapai (429).';
+      if (/quota|RESOURCE_EXHAUSTED|429/i.test(msg)) return 'Kuota Gemini habis di semua model (429). Detail: ' + msg.slice(0, 300);
       if (/not found|NOT_FOUND|404/i.test(msg)) return 'Model Gemini tidak ditemukan (404). Daftar model/key perlu diperiksa.';
       if (/timeout|AbortError/i.test(msg)) return 'Permintaan ke Gemini terlalu lama. Coba lagi atau periksa koneksi internet.';
       if (/Failed to fetch|NetworkError|CORS/i.test(msg)) return 'Browser/preview tidak bisa menghubungi server Gemini. Coba buka file melalui URL Vercel atau Chrome biasa.';
+      if (/503|UNAVAILABLE|overloaded/i.test(msg)) return 'Server Gemini lagi sibuk/overload (503). Ini sementara, bukan salah key. Coba lagi beberapa menit.';
       return msg.length > 180 ? msg.slice(0, 180) + '…' : msg;
+    }
+
+    function showDiag(t) {
+      const el = document.getElementById('api-diag');
+      if (!el) return;
+      el.style.display = 'block';
+      el.textContent = t;
+    }
+
+    async function listAvailableModels() {
+      const key = document.getElementById('api-key-input').value.trim();
+      if (!key) { showToast('⚠️ Masukkan API Key dulu!'); return; }
+      showDiag('Memeriksa model yang bisa dipakai key ini...');
+      try {
+        const res = await fetchWithTimeout(`${GEMINI_BASE}/models?pageSize=100`, { headers: { 'x-goog-api-key': key } }, 20000);
+        if (!res.ok) { const e = await readGeminiError(res); showDiag('GAGAL list model (HTTP ' + res.status + '):\n' + e.message); return; }
+        const data = await res.json();
+        const names = (data.models || [])
+          .filter(m => (m.supportedGenerationMethods || []).includes('generateContent'))
+          .map(m => m.name.replace('models/', ''))
+          .filter(n => /gemini/.test(n));
+        showDiag('Key VALID. Model generateContent yang tersedia:\n' + (names.join('\n') || '(kosong)'));
+      } catch (e) {
+        showDiag('GAGAL menghubungi Google:\n' + (e && e.message ? e.message : e) + '\n\nKalau "Failed to fetch": buka lewat URL Vercel/Chrome biasa, bukan preview editor.');
+      }
     }
 
     async function testApiKey() {
@@ -888,7 +916,7 @@
         showToast('⚠️ Masukkan API Key untuk dites!');
         return;
       }
-      showToast('⏳ Memeriksa koneksi Gemini...');
+      showToast('⏳ Memeriksa koneksi Gemini...'); showDiag('Memeriksa...');
       try {
         try { localStorage.removeItem('gemini_model'); } catch (e) {}
         const { model } = await callGemini(key, 'Balas singkat: OK');
@@ -900,6 +928,7 @@
         console.error('Tes Gemini gagal:', e);
         updateBadge(false, 'API Key belum terverifikasi');
         showToast('❌ ' + explainApiError(e));
+        showDiag('ERROR LENGKAP:\n' + (e && e.message ? e.message : e));
       }
     }
 
@@ -970,7 +999,7 @@
     const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta';
     // Urutan model yang dicoba. 'gemini-flash-latest' selalu menunjuk ke Flash terbaru,
     // jadi tidak ikut mati kalau Google pensiunkan versi tertentu.
-    const MODEL_CHAIN = ['gemini-flash-latest', 'gemini-2.5-flash', 'gemini-2.0-flash'];
+    const MODEL_CHAIN = ['gemini-2.5-flash-lite', 'gemini-2.5-flash', 'gemini-flash-latest', 'gemini-2.0-flash', 'gemini-2.0-flash-lite'];
 
     function versionOf(name) {
       const m = name.match(/gemini-(\d+(?:\.\d+)*)/);
@@ -1016,6 +1045,7 @@
         ? [cached, ...MODEL_CHAIN.filter(m => m !== cached)]
         : MODEL_CHAIN;
       let lastErr = null;
+      const tried = [];
       for (const model of chain) {
         const res = await fetchWithTimeout(`${GEMINI_BASE}/models/${model}:generateContent`, {
           method: 'POST',
@@ -1038,10 +1068,13 @@
           return { text: out, model };
         }
         lastErr = await readGeminiError(res);
-        // Model tidak ada -> coba model berikutnya. Error lain (key salah, kuota) langsung stop.
-        if (res.status !== 404) throw lastErr;
+        tried.push(model + ' → ' + res.status);
+        // 404 (model tidak ada), 429 (kuota per-model habis), 500/503 (server Google sibuk) -> coba model berikutnya.
+        if (![404, 429, 500, 503].includes(res.status)) throw lastErr;
+        if (res.status === 503 || res.status === 500) await new Promise(r => setTimeout(r, 1200));
       }
-      throw lastErr || new Error('Tidak ada model Gemini yang tersedia.');
+      const e = new Error('Semua model gagal [' + tried.join(', ') + ']. Error terakhir: ' + (lastErr ? lastErr.message : ''));
+      throw e;
     }
 
     function toText(v) {
