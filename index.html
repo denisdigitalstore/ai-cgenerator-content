@@ -1246,6 +1246,154 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
       }
     };
 
+    // Kosakata & visual per niche (dipakai generator offline)
+    const NICHE_VOICE = {
+  "Fashion & Mode": {
+    "label": "outfit",
+    "vHook": "close-up pakaian di gantungan, tangan merapikan kain",
+    "vProb": "tangan membuka lemari penuh baju lalu menutupnya lagi",
+    "vDemo": "tangan menata beberapa kombinasi outfit di tempat tidur, close-up tekstur kain",
+    "mistake": "beli baju karena tren tanpa cek apakah cocok dipadukan dengan yang sudah ada",
+    "step": "Mulai dari mengecek isi lemari, lalu pilih potongan yang bisa dipadukan banyak cara",
+    "shift": "bukan lemari yang lebih penuh, tapi kombinasi yang lebih pas",
+    "tip": "Foto isi lemari dulu sebelum belanja supaya nggak beli yang mirip.",
+    "note": "Ukuran dan potongan bisa terlihat beda di tiap orang, cek size chart dulu."
+  },
+  "Kuliner & Makanan": {
+    "label": "camilan dan menu",
+    "vHook": "close-up makanan, uap mengepul",
+    "vProb": "tangan membuka lemari dapur dan kulkas yang isinya itu-itu saja",
+    "vDemo": "close-up makanan siap santap, tangan mengambil satu porsi",
+    "mistake": "memilih makanan cuma dari tampilannya tanpa cek bahan dan porsinya",
+    "step": "Cek dulu bahan dan porsinya, lalu sesuaikan dengan selera dan kebutuhan",
+    "shift": "bukan menu yang lebih banyak, tapi pilihan yang lebih pas",
+    "tip": "Baca komposisi dan tanggal kedaluwarsa sebelum membeli.",
+    "note": "Cek komposisi dan informasi alergen pada kemasan."
+  },
+  "Skincare & Kecantikan": {
+    "label": "rutinitas skincare",
+    "vHook": "tekstur produk di punggung tangan, cahaya pagi",
+    "vProb": "tangan memegang beberapa botol skincare di rak kamar mandi",
+    "vDemo": "close-up tekstur produk, tangan merapikan urutan produk di rak",
+    "mistake": "ganti-ganti produk sekaligus sehingga nggak tahu mana yang cocok",
+    "step": "Kenali jenis kulit dulu, lalu coba satu produk baru dalam satu waktu",
+    "shift": "bukan produk yang lebih banyak, tapi urutan yang lebih sederhana",
+    "tip": "Coba satu produk baru sekali waktu agar kelihatan mana yang cocok.",
+    "note": "Kondisi kulit tiap orang berbeda. Lakukan uji tempel, dan konsultasi ke dokter jika kulitmu bermasalah."
+  },
+  "Gadget & Teknologi": {
+    "label": "gadget",
+    "vHook": "close-up gadget di meja, jari mengetuk layar",
+    "vProb": "tangan membandingkan dua gadget di meja sambil membuka halaman spesifikasi",
+    "vDemo": "close-up fitur utama gadget, layar menyala",
+    "mistake": "memilih spesifikasi paling tinggi tanpa cek kebutuhan sehari-hari",
+    "step": "Tulis dulu kebutuhan harian, baru cocokkan dengan spesifikasinya",
+    "shift": "bukan spesifikasi tertinggi, tapi yang paling sesuai kebutuhan",
+    "tip": "Daftar 3 fitur yang benar-benar kamu pakai tiap hari sebelum membeli.",
+    "note": "Cek spesifikasi dan garansi resmi sebelum membeli."
+  },
+  "Kesehatan & Fitness": {
+    "label": "rutinitas sehat",
+    "vHook": "sepatu lari dan botol minum di lantai, cahaya pagi",
+    "vProb": "tangan mematikan alarm pagi lalu menaruh sepatu olahraga kembali",
+    "vDemo": "tangan mencatat jadwal olahraga di buku, close-up peralatan",
+    "mistake": "langsung memasang target berat lalu berhenti di minggu pertama",
+    "step": "Mulai dari target kecil yang realistis, lalu naikkan pelan-pelan",
+    "shift": "bukan motivasi yang lebih besar, tapi target yang lebih kecil dan konsisten",
+    "tip": "Mulai 10 menit sehari dulu, yang penting rutin.",
+    "note": "Sesuaikan dengan kondisi tubuhmu, dan konsultasi ke tenaga kesehatan jika punya kondisi medis tertentu."
+  },
+  "Edukasi & Bisnis": {
+    "label": "belajar bisnis",
+    "vHook": "laptop dan buku catatan di meja yang rapi",
+    "vProb": "tangan mengetik lalu menghapus di laptop, banyak tab terbuka",
+    "vDemo": "screen recording materi atau dashboard, catatan tangan di buku",
+    "mistake": "belajar banyak hal sekaligus tanpa memilih satu langkah untuk dipraktikkan",
+    "step": "Pilih satu langkah kecil, praktikkan dulu, baru lanjut ke berikutnya",
+    "shift": "bukan materi yang lebih banyak, tapi satu langkah yang benar-benar dijalankan",
+    "tip": "Pilih satu hal dari materi, lalu praktikkan hari ini juga.",
+    "note": "Hasil tiap orang bisa berbeda, tergantung usaha dan konsistensi."
+  },
+  "Home & Living": {
+    "label": "penataan rumah",
+    "vHook": "sudut ruangan yang rapi, tangan merapikan barang",
+    "vProb": "tangan memindahkan tumpukan barang di meja yang berantakan",
+    "vDemo": "sudut rumah sebelum dan sesudah ditata, close-up barang",
+    "mistake": "membeli tempat penyimpanan tanpa memilah barang yang sebenarnya nggak dipakai",
+    "step": "Pilah barang dulu, baru tentukan tempat penyimpanannya",
+    "shift": "bukan barang yang lebih banyak, tapi tempat yang lebih jelas untuk tiap barang",
+    "tip": "Mulai dari satu laci atau satu sudut dulu.",
+    "note": "Ukur ruangan dan barangnya dulu sebelum membeli."
+  },
+  "E-book & Panduan": {
+    "label": "e-book dan panduan",
+    "vHook": "mockup e-book di tablet dan HP",
+    "vProb": "tangan membuka banyak tab artikel di HP, tidak ada yang tuntas",
+    "vDemo": "screen recording membuka halaman e-book, daftar isi di-highlight",
+    "mistake": "mengumpulkan banyak materi tapi nggak punya urutan belajar",
+    "step": "Pilih satu panduan yang runtut, lalu selesaikan bab demi bab",
+    "shift": "bukan bacaan yang lebih banyak, tapi urutan yang lebih jelas",
+    "tip": "Cek daftar isi dan contoh halaman dulu sebelum memutuskan.",
+    "note": "Ini bahan belajar. Hasilnya tergantung seberapa kamu mempraktikkannya."
+  },
+  "Template & Desain": {
+    "label": "template desain",
+    "vHook": "template di layar laptop dan HP, kursor mengedit teks",
+    "vProb": "screen recording membuat desain dari kanvas kosong lalu berhenti di tengah",
+    "vDemo": "screen recording mengganti teks dan warna pada template, hasil sebelum dan sesudah",
+    "mistake": "mulai dari kanvas kosong padahal waktunya habis untuk hal teknis",
+    "step": "Pakai template sebagai kerangka, lalu sesuaikan warna dan teks dengan gayamu",
+    "shift": "bukan desain dari nol, tapi kerangka yang tinggal disesuaikan",
+    "tip": "Pilih satu gaya warna dan font, lalu pakai konsisten di semua desain.",
+    "note": "Cek format file dan aplikasi yang dibutuhkan sebelum membeli."
+  },
+  "Worksheet & Printable": {
+    "label": "worksheet anak",
+    "vHook": "lembar worksheet berwarna di meja, pensil warna di sampingnya",
+    "vProb": "tangan orang tua membuka banyak tab pencarian di HP, lalu meletakkan HP",
+    "vDemo": "tangan anak mengerjakan worksheet dengan pensil warna, close-up lembar yang sudah dicetak",
+    "mistake": "memberi lembar kerja yang terlalu sulit atau terlalu panjang sehingga anak cepat bosan",
+    "step": "Pilih yang sesuai usia, mulai dari 10 menit sehari, dan buat suasananya santai",
+    "shift": "bukan belajarnya yang lebih lama, tapi caranya dibuat lebih menyenangkan",
+    "tip": "Mulai dari satu lembar pendek, dan puji prosesnya, bukan cuma hasilnya.",
+    "note": "Sesuaikan dengan usia dan kemampuan anak. Ini file digital yang perlu dicetak sendiri."
+  },
+  "Kelas & Edukasi Online": {
+    "label": "kelas online",
+    "vHook": "laptop memutar materi, catatan tangan di sampingnya",
+    "vProb": "tangan menggulir daftar video yang belum ditonton",
+    "vDemo": "screen recording daftar modul kelas, tangan mencatat",
+    "mistake": "ikut kelas tapi nggak punya jadwal belajar yang jelas",
+    "step": "Tentukan jadwal tetap, lalu selesaikan satu modul sebelum pindah ke modul lain",
+    "shift": "bukan kelas yang lebih banyak, tapi jadwal yang benar-benar dijalankan",
+    "tip": "Blok 20 menit di jadwalmu untuk satu modul.",
+    "note": "Hasil belajar tergantung kesungguhan dan konsistensi masing-masing."
+  },
+  "Tools & Software": {
+    "label": "tools digital",
+    "vHook": "dashboard di laptop, kursor menyorot fitur",
+    "vProb": "screen recording pekerjaan yang diulang manual, klik berkali-kali",
+    "vDemo": "screen recording fitur utama tools, satu alur kerja di-highlight",
+    "mistake": "memasang banyak tools tapi nggak ada yang dipakai rutin",
+    "step": "Pilih satu pekerjaan yang paling sering diulang, lalu cari tools yang menyelesaikannya",
+    "shift": "bukan tools yang lebih banyak, tapi satu alur kerja yang lebih ringkas",
+    "tip": "Coba satu tools untuk satu pekerjaan dulu.",
+    "note": "Cek kompatibilitas dan kebutuhan sistem sebelum membeli."
+  },
+  "Paket Reseller Digital": {
+    "label": "paket produk digital",
+    "vHook": "koleksi file produk digital di laptop, mockup di HP",
+    "vProb": "tangan menggulir marketplace produk digital, banyak pilihan",
+    "vDemo": "screen recording folder produk digital, beberapa contoh di-highlight",
+    "mistake": "langsung membeli paket tanpa tahu cara menawarkannya ke pelanggan",
+    "step": "Pahami dulu produknya dan siapa yang butuh, baru pikirkan cara menawarkannya",
+    "shift": "bukan produk yang lebih banyak, tapi pemahaman siapa yang membutuhkannya",
+    "tip": "Pelajari satu produk dulu sampai kamu bisa menjelaskannya dengan jelas.",
+    "note": "Pembeli tetap perlu promosi dan mencari pelanggan sendiri. Hasil tiap orang berbeda."
+  }
+};
+    Object.keys(NICHE_VOICE).forEach(k => { if (NICHE_DATA[k]) Object.assign(NICHE_DATA[k], NICHE_VOICE[k]); });
+
     function cap(t) {
       return t ? t.charAt(0).toUpperCase() + t.slice(1) : t;
     }
@@ -1264,28 +1412,28 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
       const sets = {
         'Santai & Friendly (Gen-Z)': [
           `Stop scroll dulu! ${a} wajib tau soal ${p} ini 👀`,
-          `Jujur, awalnya ragu sama ${p}... sampai nyobain sendiri.`,
+          `Sebelum memutuskan soal ${p}, cek dulu satu hal ini.`,
           `Gini nih jadinya kalau ${a} akhirnya nemu ${p}.`
         ],
         'Persuasif & Hard Sell': [
-          `${p}: ${usp}. Cek detailnya sekarang.`,
+          `Lagi cari ${nicheLabel}? Cek ${p} sekarang.`,
           `Capek sama solusi yang setengah-setengah? Coba ${p}.`,
-          `Ini alasan ${a} memilih ${p} dibanding yang lain.`
+          `Ini isi ${p} yang perlu kamu cek dulu.`
         ],
         'Edukatif & Profesional': [
-          `3 hal yang perlu ${a} ketahui sebelum memilih produk ${nicheLabel}.`,
-          `Kesalahan umum di ${nicheLabel}, dan cara menghindarinya.`,
+          `3 hal yang perlu ${a} ketahui sebelum memilih ${nicheLabel}.`,
+          `Kesalahan umum saat memilih ${nicheLabel}, dan cara menghindarinya.`,
           `Cara kerja ${p}, dijelaskan singkat dalam 15 detik.`
         ],
         'Emosional & Storytelling': [
           `Ada hari-hari di mana ${a} cuma butuh satu hal yang bikin semuanya terasa lebih ringan...`,
-          `Awalnya cuma coba-coba, tapi ${p} ternyata jadi bagian dari rutinitas harian.`,
+          `Cerita singkat soal kenapa ${a} sering kewalahan urusan ${nicheLabel}.`,
           `Ini cerita kecil di balik ${p}.`
         ],
         'Lucu & Bikin Penasaran': [
           `POV: ${a} lagi scroll terus ketemu ${p} 😭`,
           `Jangan klik kalau belum siap penasaran sama ${p}.`,
-          `Plot twist: ${p} ternyata sebagus itu.`
+          `Plot twist: ternyata ${nicheLabel} bisa sesimpel ini.`
         ]
       };
       const list = sets[tone] || sets['Santai & Friendly (Gen-Z)'];
@@ -1303,52 +1451,54 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
     // Isi cerita per gaya: dipakai bersama oleh naskah video, carousel, dan Facebook.
     function toneBeats(tone, p, a, d, nd) {
       const u = firstSentence(d);
-      const A = cap(a);
+      const L = nd.label || 'ini';
+      const vp = nd.vProb || 'tangan memegang HP, footage meja kerja';
+      const vd = nd.vDemo || `mockup atau screenshot ${p}`;
       const T = {
         'Santai & Friendly (Gen-Z)': {
           problem: `Jujur, ${a} tuh sering banget ${nd.pain}. Capek nggak sih?`,
           insight: `Ternyata ada cara yang lebih simpel. ${p}: ${u}.`,
-          vProblem: 'tangan scroll HP lalu menghela napas, teks singkat bergaya chat muncul di layar',
-          vInsight: `screen recording atau mockup ${p} di layar laptop/HP, 1-2 poin penting di-highlight`,
+          vProblem: `${vp}, teks singkat bergaya chat muncul di layar`,
+          vInsight: `${vd}, 1-2 poin penting di-highlight`,
           vCta: 'layar penutup sederhana dengan teks ajakan komentar',
-          tip: 'Mulai dari satu hal yang paling sering bikin kamu mentok. Nggak perlu semuanya sekaligus.',
+          tip: nd.tip,
           close: 'Kamu paling mentok di bagian mana? Tulis di komentar ya!'
         },
         'Persuasif & Hard Sell': {
           problem: `Sampai kapan ${a} mau terus ${nd.pain}?`,
-          insight: `${p} dibuat untuk membantu di situ. ${u}. Tetap perlu kamu pakai dan sesuaikan sendiri.`,
-          vProblem: 'teks besar kontras di atas footage laptop/meja kerja, potongan cepat',
-          vInsight: `tampilkan isi atau fitur ${p} lewat screen recording, teks tebal per poin`,
+          insight: `${p}: ${u}. Cek isinya dan sesuaikan dengan kebutuhanmu.`,
+          vProblem: `${vp}, teks besar kontras, potongan cepat`,
+          vInsight: `${vd}, teks tebal per poin`,
           vCta: 'teks tebal + panah menunjuk ke profil/link',
-          tip: 'Cek dulu apakah isinya cocok dengan kebutuhanmu sebelum memutuskan.',
+          tip: nd.tip,
           close: 'Ada pertanyaan sebelum mulai? Tanya di komentar.'
         },
         'Edukatif & Profesional': {
-          problem: `Kesalahan umum: ${a} langsung mencoba tanpa tahu akar masalahnya, yaitu ${nd.pain}.`,
-          insight: `Langkah awal yang lebih tepat: kenali kebutuhan dulu, baru pilih alatnya. ${p} bisa membantu: ${u}.`,
-          vProblem: 'teks bernomor muncul satu per satu di atas footage tangan mencatat di buku',
-          vInsight: `screenshot/tutorial singkat ${p}, panah dan highlight pada bagian penting`,
+          problem: `Kesalahan umum: ${nd.mistake || 'langsung mencoba tanpa tahu akar masalahnya'}.`,
+          insight: `${nd.step || 'Kenali kebutuhan dulu, baru pilih solusinya'}. ${p} bisa jadi salah satu pilihan: ${u}.`,
+          vProblem: `${vp}, teks bernomor muncul satu per satu`,
+          vInsight: `${vd}, panah dan highlight di bagian penting`,
           vCta: 'slide penutup berisi ringkasan 1 kalimat + ajakan simpan',
-          tip: 'Tulis dulu satu masalah yang paling sering kamu alami. Itu jadi patokan memilih solusi.',
+          tip: nd.tip,
           close: 'Mau dibahas lebih dalam bagian yang mana? Komen ya.'
         },
         'Emosional & Storytelling': {
           problem: `Ada masa ketika ${a} terus-terusan ${nd.pain}, dan rasanya nggak ada ujungnya.`,
-          insight: `Pelan-pelan sadar: yang dibutuhkan bukan lebih banyak usaha, tapi cara yang lebih pas. ${p} bisa jadi salah satu jalannya. ${u}.`,
-          vProblem: 'footage meja kerja suasana malam, gerakan pelan, teks cerita muncul bertahap',
-          vInsight: `tangan membuka ${p} di laptop/HP, cahaya hangat, teks singkat di layar`,
+          insight: `Pelan-pelan sadar: ${nd.shift || 'yang dibutuhkan bukan lebih banyak usaha, tapi cara yang lebih pas'}. ${p} bisa jadi salah satu jalannya. ${u}.`,
+          vProblem: `${vp}, gerakan pelan, cahaya hangat, teks cerita muncul bertahap`,
+          vInsight: `${vd}, cahaya hangat, teks singkat di layar`,
           vCta: 'layar penutup tenang dengan satu kalimat ajakan komentar',
           tip: '[Ganti bagian ini dengan pengalaman nyatamu sendiri. Cerita asli lebih dipercaya daripada template.]',
           close: 'Kamu pernah di titik ini juga? Cerita di komentar.'
         },
         'Lucu & Bikin Penasaran': {
           problem: `POV: ${a} lagi ${nd.pain} untuk kesekian kalinya 😭`,
-          insight: `Plot twist: ternyata ada cara yang lebih gampang. ${p}: ${u}.`,
-          vProblem: 'footage cepat dengan zoom, teks gaya meme di layar, efek suara ringan',
-          vInsight: `reveal cepat ${p} di layar laptop/HP, teks "plot twist" muncul`,
+          insight: `Plot twist: ternyata ${L} bisa sesimpel ini. ${p}: ${u}.`,
+          vProblem: `${vp}, zoom cepat, teks gaya meme, efek suara ringan`,
+          vInsight: `${vd}, reveal cepat dengan teks "plot twist"`,
           vCta: 'teks ajakan tag teman, gaya santai',
-          tip: 'Spill dulu masalah paling absurd yang pernah kamu alami, siapa tahu banyak yang senasib.',
-          close: 'Tag satu temen yang paling butuh ini 😂'
+          tip: nd.tip,
+          close: 'Siapa yang paling relate? Balas pakai emoji aja 😭'
         }
       };
       const t = T[tone] || T['Santai & Friendly (Gen-Z)'];
@@ -1394,13 +1544,13 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
           ``,
           `CTA BUTTON: Pelajari Selengkapnya`,
           ``,
-          `CATATAN VISUAL: gunakan mockup/screenshot yang jelas, tanpa perlu menampilkan wajah.`
+          `CATATAN VISUAL: ${nd.vDemo || 'gunakan mockup/screenshot yang jelas'}, tanpa perlu menampilkan wajah.`
         ].join('\n');
       }
 
       return [
         `[0-3 detik] HOOK`,
-        `Visual: teks besar di layar: "${hook}", latar footage tangan memegang HP atau meja kerja`,
+        `Visual: teks besar di layar: "${hook}", latar: ${nd.vHook || 'tangan memegang HP atau meja kerja'}`,
         `Voiceover: "${hook}"`,
         ``,
         `[3-8 detik] MASALAH`,
@@ -1450,7 +1600,7 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
         ``,
         `💡 ${b.tip}`,
         ``,
-        `Catatan: hasil tiap orang bisa berbeda, tergantung usaha dan konsistensi.`,
+        `Catatan: ${nd.note || 'Hasil tiap orang bisa berbeda.'}`,
         ``,
         `👉 ${b.cta}`,
         `💬 ${b.close}`
@@ -1459,7 +1609,7 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
 
     function generateOfflineTemplates(niche, prodName, prodDesc, targetAud, tone, platform, topic) {
       const nd = NICHE_DATA[niche] || NICHE_DATA['Edukasi & Bisnis'];
-      const hooks = buildHooks(tone, prodName, targetAud, niche.toLowerCase(), prodDesc);
+      const hooks = buildHooks(tone, prodName, targetAud, nd.label || niche.toLowerCase(), prodDesc);
       const firstHook = hooks.split('\n')[0];
       const tags = ['#fyp', '#rekomendasi', '#tiktokindonesia'].concat(nd.tags);
       const pt = productTag(prodName);
@@ -1562,10 +1712,10 @@ JANGAN tambahkan teks penyerta lain selain objek JSON tersebut.`;
       const nd = NICHE_DATA[niche] || NICHE_DATA['Edukasi & Bisnis'];
 
       const plan = [
-        { type: 'Edukasi', topic: `3 hal yang perlu diketahui ${a} soal ${niche}`, detail: `Format: video 15-20 detik atau carousel.\nSoft CTA: ajak simpan postingan.` },
+        { type: 'Edukasi', topic: `3 hal yang perlu diketahui ${a} soal ${nd.label || niche}`, detail: `Format: video 15-20 detik atau carousel.\nSoft CTA: ajak simpan postingan.` },
         { type: 'Relatable', topic: `Masalah umum: ${nd.pain}`, detail: `Format: video relatable dengan teks di layar.\nTanpa menyebut produk, fokus bikin audience merasa "ini gue banget".` },
         { type: 'Tutorial', topic: `Cara pakai / memilih ${p}`, detail: `Format: screen recording atau demo singkat.\nTunjukkan langkah demi langkah dengan jelas.` },
-        { type: 'Mitos vs Fakta', topic: `Mitos yang sering dipercaya soal ${niche}`, detail: `Format: teks animasi 10-15 detik.\nBeri 1 mitos, 1 fakta, 1 contoh singkat.` },
+        { type: 'Mitos vs Fakta', topic: `Mitos yang sering dipercaya soal ${nd.label || niche}`, detail: `Format: teks animasi 10-15 detik.\nBeri 1 mitos, 1 fakta, 1 contoh singkat.` },
         { type: 'Storytelling', topic: `Cerita di balik ${p}`, detail: `Format: footage proses + narasi.\nCeritakan kenapa produk ini dibuat atau dipilih.` },
         { type: 'Demo Produk', topic: `Demo ${p}: sorot keunggulan utama`, detail: `Format: video demo.\nSebut keunggulan secara jujur, tanpa klaim hasil yang pasti.` },
         { type: 'Q&A + CTA', topic: `Jawab pertanyaan audience tentang ${p}`, detail: `Format: video jawab komentar.\nSoft CTA: arahkan ke profil atau caption untuk info lengkap.` }
